@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Play, Pause } from "lucide-svelte";
-	import { TMComputation } from "$lib/tm-engine/computation.ts";
+	import { Play, Pause, StepForward } from "lucide-svelte";
+	import { TMComputation } from "$lib/tm-engine/computation.svelte.ts";
 
 	let { tm } = $props();
 	let input_str: string = $state('');
@@ -22,12 +22,19 @@
 					computation = new TMComputation(tm, input_str);
 				}}
 			><Play /></button>
-			<button class="border-2 rounded-md border-amber-500 bg-amber-200 p-1"><Pause /></button>
+			<button class="border-2 rounded-md border-lime-500 bg-lime-200 p-1"
+				onclick={() => {
+					computation.step()
+				}}
+			><StepForward /></button>
+			<!-- <button class="border-2 rounded-md border-amber-500 bg-amber-200 p-1"><Pause /></button> -->
 		</span>
 	</section>
 
 	<section class="px-3">
 		<!-- <canvas class='border-2 border-black rounded-md' width='800' height='150' id="tape_cvs"></canvas> -->
-		<p>{computation.tape.join("")}</p>
+		<p>State: {computation.tm.states[computation.current_state]}</p>
+		<p>Head: {computation.head}</p>
+		<p>Tape: {computation.print_tape()}</p>
 	</section>
 </div>

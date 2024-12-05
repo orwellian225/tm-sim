@@ -1,4 +1,4 @@
-type Transition = [
+export type Transition = [
 	number, // current state
 	number, // read symbol
 	number, // direction
@@ -19,11 +19,12 @@ export class TuringMachine {
 
 	transitions: Array<Transition>;
 
+	// the first element of tape_symbols is the blank symbol
 	constructor(states: Array<string>, language_symbols: Array<string>, tape_symbols: Array<string>, initial_state: number, accept_state: number, reject_state: number, transitions: Array<Transition>) {
 		this.identifier = "New Turing Machine"
 
 		this.states = states;
-		this.symbols = [...language_symbols, ...tape_symbols];
+		this.symbols = [...tape_symbols, ...language_symbols];
 		this.language_symbols = language_symbols;
 		this.initial_state = initial_state;
 		this.accept_state = accept_state;
