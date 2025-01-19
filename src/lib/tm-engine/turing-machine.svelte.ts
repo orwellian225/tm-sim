@@ -7,7 +7,8 @@ export type Transition = [
 ];
 
 export class TuringMachine {
-	identifier: string;
+	// @ts-ignore
+	identifier: string = $state();
 
 	states: Array<string>;
 	symbols: Array<string>;

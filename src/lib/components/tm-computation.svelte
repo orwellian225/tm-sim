@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Play, Pause, StepForward } from "lucide-svelte";
-	import { TMComputation } from "$lib/tm-engine/computation.svelte.ts";
+	import { TMComputation } from "$lib/tm-engine/computation.svelte";
 
 	let { tm } = $props();
 	let input_str: string = $state('');

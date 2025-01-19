@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Plus, Pencil, Trash2, Ellipsis } from 'lucide-svelte';
-	import { TuringMachine } from "$lib/tm-engine/turing-machine.ts"
+	import { TuringMachine } from "$lib/tm-engine/turing-machine.svelte"
 
 	let {tm = $bindable()} = $props();
 	let new_state_name: string = $state('');

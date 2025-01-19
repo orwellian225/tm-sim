@@ -1,4 +1,4 @@
-import type { TuringMachine, Transition } from "./turing-machine";
+import type { TuringMachine, Transition } from "./turing-machine.svelte";
 
 // Manual Enum:
 // 0 = executing
