@@ -7,18 +7,17 @@ export type Transition = [
 ];
 
 export class TuringMachine {
-	// @ts-ignore
-	identifier: string = $state();
+	identifier: string = $state("");
 
-	states: Array<string>;
-	symbols: Array<string>;
-	language_symbols: Array<string>;
+	states: Array<string> = $state([]);
+	symbols: Array<string> = $state([]);
+	language_symbols: Array<string> = $state([]);
 
-	initial_state: number;
-	accept_state: number;
-	reject_state: number;
+	initial_state: number = $state(0);
+	accept_state: number = $state(0);
+	reject_state: number = $state(0);
 
-	transitions: Array<Transition>;
+	transitions: Array<Transition> = $state([]);
 
 	// the first element of tape_symbols is the blank symbol
 	constructor(states: Array<string>, language_symbols: Array<string>, tape_symbols: Array<string>, initial_state: number, accept_state: number, reject_state: number, transitions: Array<Transition>) {

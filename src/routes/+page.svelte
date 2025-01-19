@@ -17,8 +17,6 @@
 			[0, 2, 1, 2, 2]
 		]
 	));
-
-	$inspect(tm);
 </script>
 
 <main class="flex flex-col py-4 gap-4">

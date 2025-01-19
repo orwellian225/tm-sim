@@ -15,7 +15,7 @@
 	<section class="px-3 flex flex-row justify-start items-center gap-5">
 		<span>
 			<label for="tm-input-str">Input: </label>
-			<input bind:value={input_str} name="tm-input-str" type="text" class="border-2 px-2 rounded-md border-black">
+			<input bind:value={input_str} name="tm-input-str" type="text" class="border-2 px-2 rounded-md border-stone-500">
 		</span>
 
 		<span>
