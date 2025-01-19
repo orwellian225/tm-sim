@@ -16,6 +16,7 @@ export class TMComputation {
 	head: number = $state();
 	// @ts-ignore
 	current_state: number = $state();
+	// @ts-ignore
 	status: TMStatus;
 
 	/// Potential Optimisations:
@@ -23,23 +24,28 @@ export class TMComputation {
 	///	1. Cache instructions and transitions
 
 	constructor(turing_machine: TuringMachine, input_str: string) {
-		this.head = 0;
-		this.current_state = turing_machine.initial_state;
 		this.tm = turing_machine;
 		this.input_str = input_str;
+		this.reset();
+	}
+
+	reset = () => {
+		this.head = 0;
+		this.current_state = this.tm.initial_state;
+		this.input_str = this.input_str;
 		this.status = 0;
 
-		this.tape = [ 0 ]
+		this.tape = [];
 		let potential_symbol: string = ""
-		for (let i = 0; i < input_str.length; ++i) {
-			potential_symbol += input_str[i];
+		for (let i = 0; i < this.input_str.length; ++i) {
+			potential_symbol += this.input_str[i];
 			const symbol_idx = this.tm.symbols.indexOf(potential_symbol);
 			if (symbol_idx != -1) {
 				this.tape.push(symbol_idx);
 				potential_symbol = "";
 			}
 		}
-	}
+	};
 
 	step = () => {
 		const current_symbol = this.tape[this.head];
@@ -78,6 +84,14 @@ export class TMComputation {
 			this.status = 1;
 		if (next_state == this.tm.reject_state)
 			this.status = 2;
+
+		console.log(this.head, this.print_tape());
+	}
+
+	step_till_terminate = () => {
+		while (this.status == 1 || this.status == 2) {
+			this.step();
+		}
 	}
 
 	print_tape = () => {

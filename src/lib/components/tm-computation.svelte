@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { Play, Pause, StepForward } from "lucide-svelte";
+	import { Trash2, RotateCcw, Plus, StepForward, Play } from "lucide-svelte";
 	import { TMComputation } from "$lib/tm-engine/computation.svelte";
+	import TMTape from "$lib/components/tm-tape.svelte";
+	import Tooltip from "$lib/components/tooltip.svelte";
 
 	let { tm } = $props();
 	let input_str: string = $state('');
-	let computation: TMComputation = $state(new TMComputation(tm, input_str));
+	let computations: Array<TMComputation> = $state([]);
 </script>
 
 <div class="flex flex-col gap-2">
@@ -17,24 +19,25 @@
 		</span>
 
 		<span>
-			<button class="border-2 rounded-md border-lime-500 bg-lime-200 p-1"
+			<Tooltip text="Add new computation"><button class="border-2 rounded-md border-stone-500 p-1"
 				onclick={() => {
-					computation = new TMComputation(tm, input_str);
+					computations.push(new TMComputation(tm, input_str));
 				}}
-			><Play /></button>
-			<button class="border-2 rounded-md border-lime-500 bg-lime-200 p-1"
-				onclick={() => {
-					computation.step()
-				}}
-			><StepForward /></button>
-			<!-- <button class="border-2 rounded-md border-amber-500 bg-amber-200 p-1"><Pause /></button> -->
+			><Plus size=18/></button></Tooltip>
 		</span>
 	</section>
 
-	<section class="px-3">
-		<!-- <canvas class='border-2 border-black rounded-md' width='800' height='150' id="tape_cvs"></canvas> -->
-		<p>State: {computation.tm.states[computation.current_state]}</p>
-		<p>Head: {computation.head}</p>
-		<p>Tape: {computation.print_tape()}</p>
+	<section class="px-3 space-y-1">
+		{#each computations as computation, idx}
+			<span class="flex flex-row items-center justify-start gap-2">
+				<div class="flex flex-row gap-1 border-x-4 px-2">
+					<Tooltip text="Delete computation"><button onclick={() => {computations.splice(computations.indexOf(computation), 1)}} class="border-2 border-rose-400 bg-rose-100 text-black rounded-md p-1"><Trash2 size=21 /></button></Tooltip>
+					<Tooltip text="Reset computation"><button onclick={() => {computation.reset()}} class="border-2 border-amber-400 bg-amber-100 text-black rounded-md p-1"><RotateCcw size=21 /></button></Tooltip>
+					<Tooltip text="Step computation by one"><button onclick={() => {computation.step()}} class="border-2 border-lime-400 bg-lime-100 text-black rounded-md p-1"><StepForward size=21 /></button></Tooltip>
+					<Tooltip text="Run computation"><button onclick={() => {computation.step_till_terminate()}} class="border-2 border-lime-400 bg-lime-100 text-black rounded-md p-1"><Play size=21 /></button></Tooltip>
+				</div>
+				<TMTape {computation}></TMTape>
+			</span>
+		{/each}
 	</section>
 </div>
