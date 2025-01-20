@@ -39,4 +39,4 @@
     $effect(() => { draw(); });
 </script>
 
-<canvas {width} {height} bind:this={canvas}></canvas>
+<canvas {width} {height} class="overflow-x-auto" bind:this={canvas}></canvas>

@@ -17,7 +17,10 @@ export class TMComputation {
 	// @ts-ignore
 	current_state: number = $state();
 	// @ts-ignore
-	status: TMStatus;
+	status: TMStatus = $state(0);
+
+	time_used: number = $state(0);
+	space_used: number = $state(0);
 
 	/// Potential Optimisations:
 	/// ----------------------
@@ -45,9 +48,16 @@ export class TMComputation {
 				potential_symbol = "";
 			}
 		}
+
+		this.time_used = 1;
+		this.space_used = this.input_str.length > 0 ? this.input_str.length : 1;
 	};
 
 	step = () => {
+		if (this.status != 0) {
+			return;
+		}
+
 		const current_symbol = this.tape[this.head];
 
 		// finding transition
@@ -62,15 +72,20 @@ export class TMComputation {
 		// therefore every state & symbol pair will have a transition, and the trans variable will alwyas be defined
 		// if an error is encountered here, there are problems elsewhere in the code
 		// @ts-ignore
-		const next_state = trans[2];
+		const direction = trans[2];
 		// @ts-ignore
-		const write_symbol = trans[3];
+		const next_state = trans[3];
 		// @ts-ignore
-		const direction = trans[4];
+		const write_symbol = trans[4];
 
 		this.tape[this.head] = write_symbol;
 		this.head += direction;
 		this.current_state = next_state;
+
+		this.time_used += 1;
+		if (direction > 0 && this.head >= this.space_used) {
+			this.space_used = this.head + direction;
+		}
 
 		if (this.head >= this.tape.length)
 			this.tape = this.tape.concat(Array(this.tape.length * 2).fill(0))
@@ -80,17 +95,17 @@ export class TMComputation {
 			this.head = 0;
 
 
-		if (next_state == this.tm.accept_state)
+		if (next_state == this.tm.accept_state) {
 			this.status = 1;
-		if (next_state == this.tm.reject_state)
+		}
+		if (next_state == this.tm.reject_state) {
 			this.status = 2;
-
-		console.log(this.head, this.print_tape());
+		}
 	}
 
-	step_till_terminate = () => {
-		while (this.status == 1 || this.status == 2) {
-			this.step();
+	step_till_terminate = (delay = 100) => {
+		while (this.status == 0) {
+			this.step(); 
 		}
 	}
 

@@ -7,14 +7,14 @@
 	import { TuringMachine } from "$lib/tm-engine/turing-machine.svelte"
 
 	let tm: TuringMachine = $state(new TuringMachine(
-		["State 0", "State 1", "State 2", "State 3" ],
+		["State 0", "Accept", "Reject" ],
 		["0", "1"],
-		["b"],
+		["/"],
 		0, 1, 2,
 		[
-			[0, 0, 1, 0, 0],
-			[0, 1, 1, 1, 1],
-			[0, 2, 1, 2, 2]
+			[ 0, 0, 1, 0, 1 ],
+			[ 0, 1, -1, 2, 1 ],
+			[ 0, 2, -1, 1, 1 ],
 		]
 	));
 </script>
