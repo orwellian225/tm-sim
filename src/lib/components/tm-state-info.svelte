@@ -5,14 +5,6 @@
 	let {tm = $bindable()} = $props();
 	let new_state_name: string = $state('');
 
-	let remove_state = (state: string) => { 
-        const idx = tm.states.indexOf(state);
-        tm.states.splice(idx, 1); 
-        if (tm.initial_state == idx) { tm.initial_state = 0; }
-        if (tm.accept_state == idx) { tm.accept_state = 0; }
-        if (tm.reject_state == idx) { tm.reject_state = 0; }
-    };
-	let update_state = (old_state: string, new_state: string) => { tm.states[tm.states.indexOf(old_state)] = new_state; };
 	let editing_state_idx: number = $state(-1);
 	let editing_state_value: string = $state("");
 </script>
@@ -52,14 +44,14 @@
                             </DropdownMenu.Content>
                         </DropdownMenu.Root>
                         <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => { editing_state_idx = state_idx; editing_state_value = tm_state; }}><Pencil size=16 /></button>
-                        <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => remove_state(tm_state)}><Trash2 size=16 /></button>
+                        <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => tm.remove_state_by_idx(state_idx) }><Trash2 size=16 /></button>
                     </span>
                 </li>
             {:else}
                 <li class="border-r-2 px-1 border-white flex flex-row justify-between gap-1">
                     <input class="border-2 px-2 rounded-md border-stone-500 w-40" type="text" bind:value={editing_state_value}>
                     <span class="flex flex-row gap-1">
-                        <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => { update_state(tm_state, editing_state_value); editing_state_idx = -1; }}><Save size=16 /></button>
+                        <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => { tm.update_state_by_idx(state_idx, editing_state_value); editing_state_idx = -1; }}><Save size=16 /></button>
                     </span>
                 </li>
             {/if}
@@ -74,7 +66,7 @@
         active:border-black active:bg-stone-100
         "
         onclick={() => {
-            tm.states.push(new_state_name)
+            tm.add_state(new_state_name);
             new_state_name = ''
         }}
     ><Plus /> State</button>

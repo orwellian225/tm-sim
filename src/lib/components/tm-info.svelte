@@ -13,7 +13,7 @@
 	<section class="flex flex-col border-r-4 px-3">
 		<h3 class="text-lg py-2 underline">TM Tape Symbols</h3>
 		<ul class="list-disc list-inside">
-			{#each tm.symbols as tm_symbol}
+			{#each tm.tape_symbols as tm_symbol}
 				<li>{tm_symbol}</li>
 			{/each}
 		</ul>
