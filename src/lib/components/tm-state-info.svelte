@@ -1,57 +1,60 @@
 <script lang="ts">
 	import { Plus, Pencil, Trash2, Ellipsis, Save } from 'lucide-svelte';
-	import Tooltip from '$lib/components/tooltip.svelte';
+    import { DropdownMenu } from 'bits-ui';
 
 	let {tm = $bindable()} = $props();
 	let new_state_name: string = $state('');
 
-	let remove_state = (state: string) => { tm.states.splice(tm.states.indexOf(state), 1); };
+	let remove_state = (state: string) => { 
+        const idx = tm.states.indexOf(state);
+        tm.states.splice(idx, 1); 
+        if (tm.initial_state == idx) { tm.initial_state = 0; }
+        if (tm.accept_state == idx) { tm.accept_state = 0; }
+        if (tm.reject_state == idx) { tm.reject_state = 0; }
+    };
 	let update_state = (old_state: string, new_state: string) => { tm.states[tm.states.indexOf(old_state)] = new_state; };
 	let editing_state_idx: number = $state(-1);
 	let editing_state_value: string = $state("");
-
-    $inspect(tm.states);
 </script>
 
-<section class="flex flex-col border-r-4 px-3 gap-2">
+<section class="flex flex-col border-r-4 px-3 gap-2 w-64">
     <h3 class="text-lg py-2 underline">TM States</h3>
-    <ul class="list-disc list-inside">
+    <ul class="list-disc list-inside max-h-96 overflow-y-auto">
         {#each tm.states as tm_state, state_idx}
             {#if state_idx != editing_state_idx}
-                {#if tm_state == tm.states[tm.initial_state]}
-                    <li class="border-r-2 px-1 border-blue-500 flex flex-row justify-between">
-                        <Tooltip text="Initial state">{tm_state}</Tooltip>
-                        <span class="flex flex-row gap-1">
-                            <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => { editing_state_idx = state_idx; editing_state_value = tm_state; }}><Pencil size=16 /></button>
-                            <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => remove_state(tm_state)}><Trash2 size=16 /></button>
-                        </span>
-                    </li>
-                {:else if tm_state == tm.states[tm.accept_state]}
-                    <li class="border-r-2 px-1 border-green-500 flex flex-row justify-between">
-                        <Tooltip text="Accept state">{tm_state}</Tooltip>
-                        <span class="flex flex-row gap-1">
-                            <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => { editing_state_idx = state_idx; editing_state_value = tm_state; }}><Pencil size=16 /></button>
-                            <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => remove_state(tm_state)}><Trash2 size=16 /></button>
-                        </span>
-                    </li>
-                {:else if tm_state == tm.states[tm.reject_state]}
-                    <li class="border-r-2 px-1 border-red-500 flex flex-row justify-between">
-                        <Tooltip text="Reject state">{tm_state}</Tooltip>
-                        <span class="flex flex-row gap-1">
-                            <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => { editing_state_idx = state_idx; editing_state_value = tm_state; }}><Pencil size=16 /></button>
-                            <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => remove_state(tm_state)}><Trash2 size=16 /></button>
-                        </span>
-                    </li>
-                {:else}
-                    <li class="border-r-2 px-1 border-white flex flex-row justify-between">
-                        {tm_state}
-                        <span class="flex flex-row gap-1">
-                            <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1"><Ellipsis size=16 /></button> <!-- Change to start, accept or reject state -->
-                            <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => { editing_state_idx = state_idx; editing_state_value = tm_state; }}><Pencil size=16 /></button>
-                            <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => remove_state(tm_state)}><Trash2 size=16 /></button>
-                        </span>
-                    </li>
-                {/if}
+                <li class="border-r-2 px-1 flex flex-row justify-between">
+                    {tm_state}
+                    <span class="flex flex-row gap-1 items-center">
+                        {#if state_idx == tm.initial_state}
+                            <div class="w-1 h-5 bg-blue-500"></div>
+                        {/if}
+                        {#if state_idx == tm.accept_state}
+                            <div class="w-1 h-5 bg-green-500"></div>
+                        {/if}
+                        {#if state_idx == tm.reject_state}
+                            <div class="w-1 h-5 bg-red-500"></div>
+                        {/if}
+
+                        <DropdownMenu.Root>
+                            <DropdownMenu.Trigger class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1"><Ellipsis size=16 /></DropdownMenu.Trigger> <!-- Change to start, accept or reject state -->
+                            <DropdownMenu.Content
+                                class="w-fit rounded-xl bg-white p-1 border-stone-900 border-2"
+                            >
+                                {#if state_idx != tm.initial_state}
+                                    <DropdownMenu.Item class="flex flex-row items-center justify-start"><button onclick={() => {tm.initial_state = state_idx}} class="px-1 w-44 text-left">Make Initial state</button><div class="w-1 h-5 bg-blue-500"></div></DropdownMenu.Item>
+                                {/if}
+                                {#if state_idx != tm.accept_state}
+                                    <DropdownMenu.Item class="flex flex-row items-center justify-start"><button onclick={() => {tm.accept_state = state_idx}} class="px-1 w-44 text-left">Make Accept state</button><div class="w-1 h-5 bg-green-500"></div></DropdownMenu.Item>
+                                {/if}
+                                {#if state_idx != tm.reject_state}
+                                    <DropdownMenu.Item class="flex flex-row items-center justify-start"><button onclick={() => {tm.reject_state = state_idx}} class="px-1 w-44 text-left">Make Reject state</button><div class="w-1 h-5 bg-red-500"></div></DropdownMenu.Item>
+                                {/if}
+                            </DropdownMenu.Content>
+                        </DropdownMenu.Root>
+                        <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => { editing_state_idx = state_idx; editing_state_value = tm_state; }}><Pencil size=16 /></button>
+                        <button class="border-2 border-stone-500 hover:bg-stone-100 rounded-md p-1" onclick={() => remove_state(tm_state)}><Trash2 size=16 /></button>
+                    </span>
+                </li>
             {:else}
                 <li class="border-r-2 px-1 border-white flex flex-row justify-between gap-1">
                     <input class="border-2 px-2 rounded-md border-stone-500 w-40" type="text" bind:value={editing_state_value}>

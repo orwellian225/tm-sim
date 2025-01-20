@@ -7,7 +7,7 @@
 	import { TuringMachine } from "$lib/tm-engine/turing-machine.svelte"
 
 	let tm: TuringMachine = $state(new TuringMachine(
-		["State 0", "State 1", "State 2", "State 3"],
+		["State 0", "State 1", "State 2", "State 3" ],
 		["0", "1"],
 		["b"],
 		0, 1, 2,

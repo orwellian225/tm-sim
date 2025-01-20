@@ -13,5 +13,5 @@
 {@render children()}
 
 <footer class="flex flex-row justify-evenly items-center border-t-4 py-2">
-	&copy; 2024
+	&copy; 2025
 </footer>
