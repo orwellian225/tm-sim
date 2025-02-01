@@ -3,7 +3,6 @@
 	import { TMComputation } from "$lib/tm-engine/computation.svelte";
 	import TMTape from "$lib/components/tm-tape.svelte";
 	import Tooltip from "$lib/components/tooltip.svelte";
-    import { DropdownMenu } from 'bits-ui';
 
 	let { tm } = $props();
 	let input_str: string = $state('');

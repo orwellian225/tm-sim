@@ -5,6 +5,7 @@
 	import TmComputation from "$lib/components/tm-computation.svelte"
 
 	import { TuringMachine } from "$lib/tm-engine/turing-machine.svelte"
+	import TmMoore from "$lib/components/tm-moore.svelte";
 
 	let tm: TuringMachine = $state(new TuringMachine(
 		["State 0", "Accept", "Reject" ],
@@ -28,7 +29,12 @@
 		<input type="text" class="text-3xl" bind:value={tm.identifier}>
 	</div>
 
-	<TmInfo bind:tm={tm} />
+	<div class="flex flex-row gap-2">
+		<div class="flex flex-col gap-2">
+			<TmInfo bind:tm={tm} />
+			<TmComputation tm={tm} />
+		</div>
 
-	<TmComputation tm={tm} />
+		<!-- <TmMoore bind:tm={tm} /> -->
+	</div>
 </main>

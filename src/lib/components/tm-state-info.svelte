@@ -9,9 +9,8 @@
 	let editing_state_value: string = $state("");
 </script>
 
-<section class="flex flex-col border-r-4 px-3 gap-2 w-64">
-    <h3 class="text-lg py-2 underline">TM States</h3>
-    <ul class="list-disc list-inside max-h-96 overflow-y-auto">
+<section class="flex flex-col px-3 gap-2 w-64">
+    <ul class="max-h-96 overflow-y-auto">
         {#each tm.states as tm_state, state_idx}
             {#if state_idx != editing_state_idx}
                 <li class="border-r-2 px-1 flex flex-row justify-between">
