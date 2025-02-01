@@ -14,7 +14,7 @@
 	}
 </script>
 
-<div class="flex flex-col gap-2">
+<div class="flex flex-col gap-2 outline-red-500 outline-2">
 	<h3 class="text-2xl px-2">Computation</h3>
 
 	<section class="px-3 flex flex-row justify-start items-center gap-5">

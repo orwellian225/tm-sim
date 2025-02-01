@@ -6,9 +6,8 @@
 	let {tm = $bindable()} = $props();
 </script>
 
-<h2 class="text-2xl px-2">Information</h2>
-
-<div class="flex flex-col w-fit gap-2">
+<div class="flex flex-col w-fit h-fit gap-2">
+	<h2 class="text-2xl px-2">Information</h2>
 	<TmStateInfo bind:tm={tm}></TmStateInfo>
 	<TmTapeSymbolInfo bind:tm={tm}></TmTapeSymbolInfo>	
 	<TmLangSymbolInfo bind:tm={tm}></TmLangSymbolInfo>	
