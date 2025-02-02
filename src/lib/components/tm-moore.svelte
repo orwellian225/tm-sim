@@ -1,18 +1,66 @@
 <script lang="ts">
 	import { onMount } from "svelte";
     import Camera from "$lib/canvas/camera";
+	import type RenderObject from "$lib/canvas/RenderObject";
+	import StateRO from "$lib/canvas/StateRO";
+	import TransitionRO from "$lib/canvas/TransitionRO";
 
     let { tm = $bindable() } = $props();
-    let loop_handle = null;
 
     let canvas: HTMLCanvasElement;
     let canvas_parent: HTMLElement;
     let ctx: CanvasRenderingContext2D;
     let camera: any;
 
+    let loop_handle = null;
+
+    const render_objects: Array<RenderObject> = [];
     let dragging = false;
 
+    let update_render_objects = () => {
+        // This function is very messy
+        // THe state render objects are the first tm.states.length elements of the render_objects array
+        // So the two arrays are essentially parallel
+        // Cleaning this should be done be moving the state render objects and transition render objects into different arrays
+        // THe parallelism can be maintained but the two render objects should not be in the same array
+        // If the render objects are in the same array, the parallelism should be discarded or enforced by some mechanism
+
+        render_objects.splice(0, render_objects.length);
+        for (let i = 0; i < tm.states.length; ++i) {
+            const angle = 2 * Math.PI * i / tm.states.length - Math.PI / 2;
+            render_objects.push(new StateRO(
+                ctx, 
+                { x: 250 * Math.cos(angle), y: 250 * Math.sin(angle) }, 
+                tm, i
+            ));
+        }
+
+        for (let state_idx = 0; state_idx <  tm.states.length; ++state_idx) {
+            for (let symbol_idx = 0; symbol_idx < tm.symbols.length; ++symbol_idx) {
+                let transition = tm.has_transition({from_state: state_idx, read_symbol: symbol_idx});
+                if (transition) {
+                    render_objects.push(new TransitionRO(
+                        ctx,
+                        tm,
+                        //@ts-ignore
+                        render_objects[state_idx], render_objects[transition[3]], symbol_idx
+                    ));
+                } else {
+                    render_objects.push(new TransitionRO(
+                        ctx,
+                        tm,
+                        //@ts-ignore
+                        render_objects[state_idx], null, symbol_idx
+                    ));
+                }
+            }
+        }
+    };
+
+    $effect(() => { update_render_objects(); });
+
     onMount(() => {
+
         canvas.addEventListener("mousemove", (event) => {
             if (dragging) {
                 camera.moveTo(
@@ -37,11 +85,8 @@
         camera = new Camera(ctx, { distance: 1700 });
         camera.updateViewport();
 
-        ctx.strokeStyle = "black";
-        ctx.fillStyle = "black";
-        ctx.font = "1em sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        update_render_objects();
+
         draw();
     });
 
@@ -50,42 +95,13 @@
 
         camera.begin();
 
-        // for (let i = 0; i < 100; ++i) {
-        //     for (let j = 0; j < 100; ++j) {
-        //         ctx.fillStyle = (i % 2) != (j % 2) ? "green" : "blue";
-        //         ctx.fillRect(i * 10 - 50, j * 10 - 50, 10 , 10);
-        //     }
-        // }
-
-        for (let i = 0; i < tm.states.length; ++i) {
-            let x = 250 * Math.cos(2 * Math.PI * i / tm.states.length - Math.PI / 2);
-            let y = 250 * Math.sin(2 * Math.PI * i / tm.states.length - Math.PI / 2);
-            let ring_colours = [];
-
-            ctx.strokeStyle = "black";
-            ctx.beginPath();
-                ctx.lineWidth = 2;
-                ctx.arc(x, y, 40, 0, 2 * Math.PI);
-                ctx.stroke();
-            ctx.closePath();
-            ctx.fillText(tm.states[i], x, y);
-
-            if (tm.accept_state == i) { ring_colours.push("#00c850"); }
-            if (tm.reject_state == i) { ring_colours.push("#fb2c36"); }
-            if (tm.initial_state == i) { ring_colours.push("#2b7fff"); }
-
-            for (let j = 0; j < ring_colours.length; ++j) {
-                ctx.beginPath();
-                    ctx.lineWidth = 4;
-                    ctx.strokeStyle = ring_colours[j];
-                    ctx.arc(x, y, 40 - 3 * (j + 1), 0, 2 * Math.PI);
-                    ctx.stroke();
-                ctx.closePath();
+            for (let i = 0; i < render_objects.length; ++i) {
+                render_objects[i].render();
             }
-        }
+
         camera.end();
 
-        loop_handle = setTimeout(draw, 30);
+        loop_handle = setTimeout(draw, 10);
     };}
 </script>
 

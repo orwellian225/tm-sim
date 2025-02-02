@@ -149,4 +149,33 @@ export class TuringMachine {
 
 	// ---------------------------------------------------------------------
 	// Transitions
+
+	has_transition({
+		from_state,
+		read_symbol,
+		to_state,
+		write_symbol,
+	}: {
+		from_state: number | undefined,
+		read_symbol: number | undefined,
+		to_state: number | undefined,
+		write_symbol: number | undefined
+	}): Transition | null {
+		if (from_state === undefined && read_symbol === undefined && to_state === undefined && write_symbol === undefined) {
+			return null;
+		}
+
+		for (let i = 0; i < this.transitions.length; ++i) {
+			if (
+				(from_state === undefined || this.transitions[i][0] == from_state) &&
+				(read_symbol === undefined || this.transitions[i][1] == read_symbol) &&
+				(to_state === undefined || this.transitions[i][3] == to_state) &&
+				(write_symbol === undefined || this.transitions[i][4] == write_symbol)
+			) {
+				return this.transitions[i];
+			}
+		}
+
+		return null;
+	}
 }
