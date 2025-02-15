@@ -1,15 +1,16 @@
+import { Vector2D } from "./vector";
+
 export default abstract class RenderObject {
     context: CanvasRenderingContext2D;
-    position: {x: number, y: number};
+    position: Vector2D;
 
-    constructor(context: CanvasRenderingContext2D, position: {x: number, y: number}) {
+    constructor(context: CanvasRenderingContext2D, position: Vector2D) {
         this.context = context;
         this.position = position;
     }
 
     render() {
         this.context.save();
-        this.context.translate(this.position.x, this.position.y);
 
         this.draw();
         

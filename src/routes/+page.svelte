@@ -8,14 +8,15 @@
 	import TmMoore from "$lib/components/tm-moore.svelte";
 
 	let tm: TuringMachine = $state(new TuringMachine(
-		[ "State 0", "Accept", "Reject", "State 1", "State 2" ],
+		//  0     1     2     3     4     5    6      7     8     9    10
+		[ "q0", "qA", "qR" ],
 		["0", "1"],
-		["/"],
+		["b"],
 		0, 1, 2,
 		[
-			[ 0, 0, 1, 0, 1 ],
-			[ 0, 1, -1, 2, 1 ],
-			[ 0, 2, -1, 1, 1 ],
+			[0, 0, 1, 1, -2],
+			[0, 1, 1, 0, 0],
+			[0, 2, 1, 2, 1],
 		]
 	));
 </script>

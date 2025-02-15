@@ -4,6 +4,7 @@
 	import type RenderObject from "$lib/canvas/RenderObject";
 	import StateRO from "$lib/canvas/StateRO";
 	import TransitionRO from "$lib/canvas/TransitionRO";
+    import { Vector2D } from "$lib/canvas/vector";
 
     let { tm = $bindable() } = $props();
 
@@ -30,27 +31,44 @@
             const angle = 2 * Math.PI * i / tm.states.length - Math.PI / 2;
             render_objects.push(new StateRO(
                 ctx, 
-                { x: 250 * Math.cos(angle), y: 250 * Math.sin(angle) }, 
+                new Vector2D(250 * Math.sin(angle), 250 * Math.cos(angle)),
                 tm, i
             ));
         }
 
         for (let state_idx = 0; state_idx <  tm.states.length; ++state_idx) {
             for (let symbol_idx = 0; symbol_idx < tm.symbols.length; ++symbol_idx) {
+                if (state_idx == tm.accept_state || state_idx == tm.reject_state) {
+                    continue;
+                }
+
                 let transition = tm.has_transition({from_state: state_idx, read_symbol: symbol_idx});
+                const from_obj = render_objects[state_idx];
                 if (transition) {
+                    const to_obj = render_objects[transition[3]];
+                    let self_transition_flag = 0.;
+
+                    let offset_angle = 0.;
+
+                    if (to_obj === from_obj) {
+                        offset_angle = -Math.PI / 12;
+                        self_transition_flag = 1.;
+                    }
+
                     render_objects.push(new TransitionRO(
                         ctx,
                         tm,
-                        //@ts-ignore
-                        render_objects[state_idx], render_objects[transition[3]], symbol_idx
+                        { point: from_obj.position, offset: from_obj.draw_radius },
+                        { point: to_obj.position, offset: to_obj.draw_radius + 5. },
+                        transition
                     ));
                 } else {
                     render_objects.push(new TransitionRO(
                         ctx,
                         tm,
-                        //@ts-ignore
-                        render_objects[state_idx], null, symbol_idx
+                        { point: from_obj.position, offset: from_obj.draw_radius },
+                        null,
+                        transition
                     ));
                 }
             }
@@ -112,9 +130,9 @@
 }} />
 
 <div class="w-full h-[70vh]">
-    <h2 class="text-2xl px-2">Moore Diagram</h2>
+    <h2 class="text-2xl px-2">State Machine</h2>
 
     <section bind:this={canvas_parent} class="h-full p-2">
-        <canvas bind:this={canvas}></canvas>
+        <canvas class="border-2 border-black" bind:this={canvas}></canvas>
     </section>
 </div>

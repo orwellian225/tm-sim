@@ -1,105 +1,152 @@
 import RenderObject from "$lib/canvas/RenderObject";
 import StateRO from "$lib/canvas/StateRO";
 import type { Transition, TuringMachine } from "$lib/tm-engine/turing-machine.svelte";
+import { Vector2D } from "./vector";
+
+type TransitionRenderPoint = {
+    point: Vector2D,
+    offset: number,
+
+    offset_point?: Vector2D,
+    offset_angle?: number, // Angle from point to offset_point
+};
 
 export default class TransitionRO extends RenderObject {
     tm: TuringMachine;
-    from_state: StateRO;
-    to_state: StateRO | null;
-    symbol_idx: number;
+    transition: Transition;
+    from: TransitionRenderPoint;
+    to: TransitionRenderPoint | null;
 
     text_offset: number = 15;
+    notch_radius: number = 7;
 
-    constructor(context: CanvasRenderingContext2D, tm: TuringMachine, from_state: StateRO, to_state: StateRO | null, read_symbol_idx: number) {
-        super(context, {x: 0, y: 0});
-        this.from_state = from_state;
-        this.to_state = to_state;
-        this.symbol_idx = read_symbol_idx;
+    constructor(context: CanvasRenderingContext2D, tm: TuringMachine, from_point: TransitionRenderPoint, to_point: TransitionRenderPoint | null, transition: Transition) {
+        super(context, new Vector2D(0, 0));
         this.tm = tm;
+        this.transition = transition;
+
+        if (to_point === null) {
+            
+            const offset_angle = 2 * Math.PI / tm.symbols.length * transition[1];
+            this.to = null;
+            this.from = {
+                point: from_point.point,
+                offset: from_point.offset,
+                offset_angle: offset_angle,
+                offset_point: from_point.point.add_polar(from_point.offset, offset_angle)
+            }
+        } else if (to_point.point === from_point.point) {
+            const offset_angle = 2 * Math.PI / tm.symbols.length * transition[1];
+            this.from = {
+                point: from_point.point,
+                offset: from_point.offset,
+                offset_angle: offset_angle,
+                offset_point: from_point.point.add_polar(from_point.offset, offset_angle)
+            }
+            const shifted_angle = offset_angle + 2 * Math.PI / tm.symbols.length / 2;
+            const shifted_point = to_point.point.add_polar(to_point.offset, shifted_angle)
+            this.to = {
+                point: to_point.point,
+                offset: to_point.offset,
+                offset_angle: shifted_angle,
+                offset_point: shifted_point,
+            }
+        } else {
+            const from_to_vec = from_point.point.sub(to_point.point)
+            const to_from_vec = to_point.point.sub(from_point.point)
+
+            this.from = {
+                point: from_point.point,
+                offset: from_point.offset,
+                offset_angle: to_from_vec.angle(),
+                offset_point: from_point.point.add_polar(from_point.offset, to_from_vec.angle())
+            };
+
+            this.to = {
+                point: to_point.point,
+                offset: to_point.offset,
+                offset_angle: from_to_vec.angle(),
+                offset_point: to_point.point.add_polar(to_point.offset, from_to_vec.angle())
+            }
+        }
     }
 
     draw() {
         this.context.strokeStyle = "black";
+        this.context.fillStyle = "black";
         this.context.lineWidth = 2;
 
-        if (this.to_state == null) {
+        if (this.to == null) {
+            let text_vec = this.from.offset_point.add_polar(this.notch_radius + this.text_offset, this.from.offset_angle);
             this.context.beginPath();
                 this.context.arc(
-                    this.from_state.position.x + this.from_state.draw_radius * Math.cos(2 * Math.PI * this.symbol_idx / this.tm.symbols.length - Math.PI / 2),
-                    this.from_state.position.y + this.from_state.draw_radius * Math.sin(2 * Math.PI * this.symbol_idx / this.tm.symbols.length - Math.PI / 2),
-                    0.15 * this.from_state.draw_radius, 0, 2 * Math.PI
+                    this.from.offset_point.x, 
+                    this.from.offset_point.y, 
+                    this.notch_radius, 0, 2 * Math.PI
                 );
                 this.context.fill();
             this.context.closePath();
 
-            this.context.fillStyle = "black";
             this.context.font = "1em sans-serif";
             this.context.textAlign = "center";
             this.context.textBaseline = "middle";
             this.context.fillText(
-                this.tm.symbols[this.symbol_idx], 
-                this.from_state.position.x + (this.from_state.draw_radius + this.text_offset) * Math.cos(2 * Math.PI * this.symbol_idx / this.tm.symbols.length - Math.PI / 2),
-                this.from_state.position.y + (this.from_state.draw_radius + this.text_offset) * Math.sin(2 * Math.PI * this.symbol_idx / this.tm.symbols.length - Math.PI / 2)
+                this.tm.symbols[this.symbol_idx], text_vec.x, text_vec.y
             );
-        } else if (this.from_state != this.to_state) {
-            const from_vec = { x: this.from_state.position.x, y: this.from_state.position.y };
-            const to_vec = { x: this.to_state.position.x, y: this.to_state.position.y };
-            const between_vec = {
-                x: from_vec.x - to_vec.x,
-                y: from_vec.y - to_vec.y
-            };
+        } else {
+            let line_length = this.from.point.sub(this.to.point).mag();
+            let norm_line_length = 10 / line_length > 1. ? 1. : 10 / line_length;
 
-            const from_mag = Math.sqrt(from_vec.x * from_vec.x + from_vec.y * from_vec.y);
-            const to_mag = Math.sqrt(to_vec.x * to_vec.x + to_vec.y * to_vec.y);
-            const between_mag = Math.sqrt(between_vec.x * between_vec.x + between_vec.y * between_vec.y);
+            let control_point_1 = this.from.offset_point.add_polar(
+                120 * norm_line_length,
+                this.from.offset_angle as number
+            );
+            let control_point_2 = this.to.offset_point.add_polar(
+                120 * norm_line_length, 
+                this.to.offset_angle as number
+            );
 
-            // From Vector & Between Vector
-            const fb_dot = from_vec.x * between_vec.x + from_vec.y * between_vec.y;
-            const fb_angle = Math.acos( fb_dot / (from_mag * between_mag) );
-            const fb_pos = { 
-                x: from_vec.x + this.from_state.draw_radius * Math.sin(fb_angle), 
-                y: from_vec.y + this.from_state.draw_radius * Math.cos(fb_angle) 
-            };
-
-            // To Vector & Between Vector
-            const tb_dot = to_vec.x * between_vec.x + to_vec.y * between_vec.y;
-            const tb_angle = Math.acos( tb_dot / (to_mag * between_mag) );
-            const tb_pos = {
-                x: to_vec.x + this.from_state.draw_radius * Math.sin(2 * Math.PI - tb_angle), 
-                y: to_vec.y + this.from_state.draw_radius * Math.cos(2 * Math.PI - tb_angle) 
-            };
-
+            this.context.fillStyle = 'black';
+            this.context.strokeStyle = 'black';
             this.context.beginPath();
-                this.context.moveTo(fb_pos.x, fb_pos.y);
-                this.context.lineTo(tb_pos.x + 5 * Math.sin(2 * Math.PI - tb_angle), tb_pos.y + 5 * Math.cos(2 * Math.PI - tb_angle));
+                this.context.moveTo(this.from.offset_point.x, this.from.offset_point.y);
+                this.context.bezierCurveTo(
+                    control_point_1.x, control_point_1.y,
+                    control_point_2.x, control_point_2.y,
+                    this.to.offset_point.x, this.to.offset_point.y
+                );
                 this.context.stroke();
             this.context.closePath();
 
-            // Change to arrow at some point in the future
-            this.context.beginPath();
-                this.context.fillStyle = "orange";
-                this.context.arc(
-                    tb_pos.x + 5 * Math.sin(2 * Math.PI - tb_angle),
-                    tb_pos.y + 5 * Math.cos(2 * Math.PI - tb_angle),
-                    4, 0, 2 * Math.PI
-                )
-                this.context.fill();
-            this.context.closePath();
+            const midpoint = control_point_1.add(control_point_2).mult_cartesian(0.5);
+            this.context.fillStyle = 'black';
+            this.context.font = "1em sans-serif";
+            this.context.textAlign = "center";
+            this.context.textBaseline = "middle";
+            this.context.save()
+            this.context.translate(midpoint.x, midpoint.y);
+            this.context.rotate(Math.PI + control_point_1.sub(control_point_2).angle())
+            this.context.fillText(
+                `${this.tm.symbols[this.transition[1]]} -> ${this.tm.symbols[this.transition[3]]}, ${this.tm.direction_str(this.transition[4])}`,
+                0, this.text_offset
+            );
+            this.context.restore()
 
-            //@ts-ignore
-            const transition = this.tm.has_transition({ from_state: this.from_state.state_idx, read_symbol: this.symbol_idx, to_state: this.to_state.state_idx });
+            // Draw Arrow Head
+            this.context.fillStyle = 'black';
+            this.context.strokeStyle = 'black';
+            const angle = Math.PI + this.to.offset_angle; // offset angle points outwards
+            const start = this.to.offset_point.add_polar(2, angle);
+            const left = this.to.offset_point.add_polar(-9, angle - Math.PI / 6);
+            const right = this.to.offset_point.add_polar(-9, angle + Math.PI / 6);
             this.context.beginPath();
-                this.context.translate((fb_pos.x + tb_pos.x) / 2, (fb_pos.y + tb_pos.y) / 2);
-                this.context.rotate(Math.atan2(tb_pos.y - fb_pos.y, tb_pos.x - fb_pos.x));
-                this.context.fillStyle = "black";
-                this.context.font = "1em sans-serif";
-                this.context.textAlign = "center";
-                this.context.textBaseline = "middle";
-                this.context.fillText(
-                    `${this.tm.symbols[transition[1]]} -> ${this.tm.symbols[transition[4]]}, ${this.tm.direction_str(transition[2])}`,
-                    0,-10 
-                );
+                this.context.moveTo(start.x, start.y)
+                this.context.lineTo(left.x, left.y);
+                this.context.lineTo(right.x, right.y);
+                this.context.lineTo(start.x, start.y)
             this.context.closePath();
+            this.context.fill();
         }
     }
+
 }
