@@ -63,7 +63,24 @@
                 },
                 {
                     text: "From File",
-                    onclick: () => {},
+                    onclick: () => {
+                        const file_upload = document.createElement("input")
+                        file_upload.type = "file";
+                        file_upload.accept = ".json";
+                        file_upload.click();
+
+                        file_upload.onchange = (e) => {
+                            const file = (e.target as HTMLInputElement).files[0];
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const obj = JSON.parse((e.target as FileReader).result as string);
+                                current_turing_machine.load(obj);
+                            }
+                            reader.readAsText(file);
+                        }
+
+                        file_upload.remove()
+                    },
                     subelements: [] 
                 }
             ]
