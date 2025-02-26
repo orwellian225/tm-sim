@@ -7,8 +7,6 @@ export type Transition = [
 ];
 
 export class TuringMachine {
-	identifier: string = $state("");
-
 	states: Array<string> = $state([]);
 	symbols: Array<string> = $state([]);
 	language_symbols: Array<string> = $state([]);
@@ -22,8 +20,6 @@ export class TuringMachine {
 
 	// the first element of tape_symbols is the blank symbol
 	constructor(states: Array<string>, language_symbols: Array<string>, tape_symbols: Array<string>, initial_state: number, accept_state: number, reject_state: number, transitions: Array<Transition>) {
-		this.identifier = "New Turing Machine"
-
 		this.states = states;
 		this.symbols = [...tape_symbols, ...language_symbols];
 		this.tape_symbols = tape_symbols;
@@ -177,5 +173,19 @@ export class TuringMachine {
 		}
 
 		return null;
+	}
+
+	// JSON
+	toJSON(key: any) {
+		return {
+			states: this.states,
+			symbols: this.symbols,
+			language_symbols: this.language_symbols,
+			tape_symbols: this.tape_symbols,
+			initial_state: this.initial_state,
+			accept_state: this.accept_state,
+			reject_state: this.reject_state,
+			transitions: this.transitions,
+		};
 	}
 }
