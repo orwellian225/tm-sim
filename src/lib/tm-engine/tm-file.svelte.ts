@@ -1,11 +1,11 @@
 import TuringMachine from "./tm-machine.svelte";
 
 export default class TMFile {
-    identifier: string;
+    identifier: string = $state("");
 
-    machine: TuringMachine;
-    computations: Array<string>;
-    diagram: Array<{x: number, y: number}>; // Parallel array to machine.states
+    machine: TuringMachine = $state(new TuringMachine([], [], [], [], 0, 0, 0));
+    computations: Array<string> = $state([]);
+    diagram: Array<{x: number, y: number}> = $state([]); // Parallel array to machine.states
 
     constructor(identifier: string, machine: TuringMachine, computations: Array<string>, diagram: Array<{x: number, y: number}> | null = null) {
         this.identifier = identifier;
@@ -40,6 +40,23 @@ export default class TMFile {
 
         element.click();
         document.body.removeChild(element);
+    }
+
+    save() {
+        const local_machines_json = localStorage.getItem("saved_machines");
+        if (local_machines_json) {
+            const local_machines = JSON.parse(local_machines_json);
+            local_machines.push(JSON.stringify(this));
+        } else {
+            localStorage.setItem("saved_machines", JSON.stringify([JSON.stringify(this)]));
+        }
+    }
+
+    load(obj: any) {
+        this.identifier = obj.identifier;
+        this.machine = TuringMachine.fromJSON(obj.machine);
+        this.computations = obj.computations;
+        this.diagram = obj.diagram;
     }
 
     export_transition_table({

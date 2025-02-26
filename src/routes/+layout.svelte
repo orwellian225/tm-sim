@@ -7,16 +7,18 @@
 
 	import TMFile from "$lib/tm-engine/tm-file.svelte";
 	import TuringMachine from "$lib/tm-engine/tm-machine.svelte";
+	import MenuControl from '$lib/components/MenuControl.svelte';
+	import MenuNavigation from '$lib/components/MenuNavigation.svelte';
 
 	import { setContext } from "svelte";
 	import { page } from "$app/state";
 
-	console.log("page.url.pathname", page.url.pathname);
-
 	import { Separator } from "bits-ui"
+	import { PencilSimple, FloppyDisk } from "phosphor-svelte";
 
-	let current_turing_machine = new TMFile(
-		"New Turing Machine",
+
+	let current_turing_machine = $state(new TMFile(
+		"New TM",
 		new TuringMachine( 
 			// Reject empty string, accept any other string
 			[ "qI", "qA", "qR" ],  ['0', '1'], ['b'],
@@ -28,34 +30,31 @@
 			0, 1, 2
 		),
 		[ "", "0", "1" ], 
-	);
+	));
 	setContext("current_turing_machine", current_turing_machine );
+
+	let edit_identifier = $state(false);
 </script>
 
 <main class="flex gap-2 h-screen w-screen">
 	<div class="w-1/5 h-full px-2 flex flex-col gap-4">
 		<div class="w-full h-fit">
 			<h1 class="text-4xl">Menu</h1>
-			<h2 class="text-2xl">{current_turing_machine.identifier}</h2>
+			<h2 class="text-2xl flex justify-between items-center">
+				{#if edit_identifier}
+					<input class="w-4/5" type="text" bind:value={current_turing_machine.identifier} autofocus/>
+					<button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => edit_identifier = false}><FloppyDisk size={20}/></button>
+				{:else}
+					{current_turing_machine.identifier}
+					<button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => edit_identifier = true}><PencilSimple size={20}/></button>
+				{/if}
+			</h2>
 
 			<Separator.Root class="bg-black my-2 data-[orientation=horizontal]:h-[2px] data-[orientation=horizontal]:w-full" />
-
-			<ol>
-				<li><button>> New</button></li>
-				<li><button>> Save</button></li>
-				<li><button>> Load</button></li>
-				<li><button>> Export</button></li>
-			</ol>
-
+			<MenuControl />
 			<Separator.Root class="bg-black my-2 data-[orientation=horizontal]:h-[2px] data-[orientation=horizontal]:w-full" />
+			<MenuNavigation url={page.url.pathname}/>
 
-			<nav><ol>
-				<li><a href="/">{#if page.url.pathname == "/"}□{:else}>{/if} Editor</a> </li>
-				<li><a href="/info">{#if page.url.pathname == "/info"}□{:else}>{/if} Information</a></li>
-				<li><a href="/examples">{#if page.url.pathname == "/examples"}□{:else}>{/if} Examples </a></li>
-				<li><a href="/help">{#if page.url.pathname == "/help"}□{:else}>{/if} Help</a></li>
-				<li><a href="/tools">{#if page.url.pathname == "/tools"}□{:else}>{/if} Other Tools</a></li>
-			</ol></nav>
 		</div>	
 
 		<div class="w-full h-fit">

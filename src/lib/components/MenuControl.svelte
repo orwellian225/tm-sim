@@ -1,0 +1,98 @@
+<script lang="ts">
+    import RecursiveTextMenu from './RecursiveTextMenu.svelte';
+
+    import TMFile from '$lib/tm-engine/tm-file.svelte';
+    import TuringMachine from '$lib/tm-engine/tm-machine.svelte';
+
+    import { getContext } from 'svelte';
+
+    let current_turing_machine: TMFile = getContext("current_turing_machine");
+
+    function new_tm() {
+        current_turing_machine.identifier = "New TM"; 
+        current_turing_machine.machine = new TuringMachine( 
+            // Reject empty string, accept any other string
+            [ "qI", "qA", "qR" ],  ['0', '1'], ['b'],
+            [
+                [ 0, 0, 2, 0, +1 ],
+                [ 0, 1, 1, 2, +1 ],
+                [ 0, 2, 1, 2, +1 ],
+            ].map(t => TuringMachine.transition_array_to_obj(t)), 
+            0, 1, 2
+        );
+        current_turing_machine.computations = [ "", "0", "1" ];
+    }
+
+
+    const elements = [
+        {
+            text: "New",
+            onclick: () => { new_tm(); },
+            subelements: [] 
+        },
+        {
+            text: "Save",
+            onclick: () => {
+                current_turing_machine.save();
+            },
+            subelements: [] 
+        },
+        {
+            text: "Load",
+            onclick: () => {},
+            subelements: [
+                {
+                    text: "Recent",
+                    onclick: () => {},
+                    subelements: localStorage.getItem("saved_machines") ? JSON.parse(localStorage.getItem("saved_machines")).slice(-5).map((json: any) => {
+                        const obj = JSON.parse(json);
+                        return {
+                            text: obj.identifier,
+                            onclick: () => {
+                                current_turing_machine.load(obj)
+                            },
+                            subelements: []
+                        }
+                    }) : [
+                        {
+                            text: "No recent files",
+                            onclick: () => {},
+                            subelements: []
+                        }
+                    ]
+                },
+                {
+                    text: "From File",
+                    onclick: () => {},
+                    subelements: [] 
+                }
+            ]
+        },
+        {
+            text: "Export",
+            onclick: () => {},
+            subelements: [
+                {
+                    text: "Download JSON",
+                    onclick: () => {
+                        current_turing_machine.download();
+                    },
+                    subelements: []
+                },
+                {
+                    text: "Copy Transition Table",
+                    onclick: () => {
+                        navigator.clipboard.writeText(current_turing_machine.export_transition_table({}))
+                            .then(() => console.log("Copied transition table to clipboard"))
+                            .catch(err => console.error("Failed to copy transition table to clipboard", err));
+                    },
+                    subelements: [] 
+                }
+            ]
+        }
+    ];
+</script>
+
+<ul>
+    <RecursiveTextMenu values={elements} />
+</ul>
