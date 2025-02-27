@@ -5,7 +5,9 @@
     import { Separator } from "bits-ui";
 	import RecursiveTextMenu from "./RecursiveTextMenu.svelte";
 
-    let current_turing_machine = getContext("current_turing_machine");
+    import TuringMachine from "$lib/tm-engine/tm-machine.svelte";
+
+    let current_turing_machine: TuringMachine = getContext("current_turing_machine");
 
     let show_states = $state(true);
 
@@ -56,7 +58,7 @@
     <Separator.Root class="bg-black my-2 data-[orientation=horizontal]:h-[2px] data-[orientation=horizontal]:w-full" />
 
     {#if show_states}
-        <ul class="space-y-[1px] max-h-[250px] overflow-y-auto">
+        <ul class="space-y-[1px] max-h-[200px] overflow-y-auto">
             {#each current_turing_machine.machine.states as state, idx}
                 <li class="flex justify-between items-center">
                     {#if editing_state_idx != idx}

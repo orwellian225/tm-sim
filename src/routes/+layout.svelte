@@ -10,6 +10,8 @@
 	import MenuControl from '$lib/components/MenuControl.svelte';
 	import MenuNavigation from '$lib/components/MenuNavigation.svelte';
 	import StateMenu from '$lib/components/StateMenu.svelte';
+	import TapeAlphabetMenu from '$lib/components/TapeAlphabetMenu.svelte';
+	import LangAlphabetMenu from '$lib/components/LangAlphabetMenu.svelte';
 
 	import { setContext } from "svelte";
 	import { page } from "$app/state";
@@ -58,9 +60,11 @@
 
 		</div>	
 
-		<div class="w-full h-fit space-y-1">
+		<div class="w-full h-fit space-y-5">
 			<h1 class="text-4xl">Machine</h1>
 			<StateMenu />
+			<TapeAlphabetMenu />
+			<LangAlphabetMenu />
 		</div>	
 	</div>
 
