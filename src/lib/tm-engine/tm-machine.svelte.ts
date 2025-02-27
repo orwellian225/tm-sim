@@ -7,14 +7,14 @@ export type TMTransition = {
 }
 
 export default class TuringMachine {
-    states: Array<string>;
-    lang_alphabet: Array<string>;
-    tape_alphabet: Array<string>; // blank symbol is tape_alphabet[0], and Union(tape, lang) = empty (i.e. not merged alphabets)
-    alphabet: Array<string>; // Union(tape, lang)
-    transitions: Array<TMTransition>;
-    initial_state: number; // index into states
-    accept_state: number; // index into states
-    reject_state: number; // index into states
+    states: Array<string> = $state([]);
+    lang_alphabet: Array<string> = $state([]);
+    tape_alphabet: Array<string> = $state([]); // blank symbol is tape_alphabet[0], and Union(tape, lang) = empty (i.e. not merged alphabets)
+    alphabet: Array<string> = $state([]); // Union(tape, lang)
+    transitions: Array<TMTransition> = $state([]);
+    initial_state: number = $state(-1); // index into states
+    accept_state: number = $state(-1); // index into states
+    reject_state: number = $state(-1); // index into states
 
     constructor(states: Array<string>, lang_alphabet: Array<string>, tape_alphabet: Array<string>, transitions: Array<TMTransition>, initial_state: number, accept_state: number, reject_state: number) {
         this.states = states;
@@ -25,6 +25,23 @@ export default class TuringMachine {
         this.initial_state = initial_state;
         this.accept_state = accept_state;
         this.reject_state = reject_state;
+    }
+
+    add_state(name: string) { this.states.push(name); }
+    edit_state(index: number, new_name: string) { this.states[index] = new_name; }
+    remove_state(index: number) { this.states.splice(index, 1); }
+
+    add_lang_symbol(symbol: string) { this.lang_alphabet.push(symbol); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
+    edit_lang_symbol(index:number, symbol: string) { this.lang_alphabet[index] = symbol; this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
+    remove_lang_symbol(index:number) { this.lang_alphabet.splice(index, 1); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
+
+    add_tape_symbol(symbol: string) { this.tape_alphabet.push(symbol); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
+    edit_tape_symbol(index:number, symbol: string) { this.tape_alphabet[index] = symbol; this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
+    remove_tape_symbol(index:number) { 
+        if (index == 0)
+            return; // can't remove blank symbol
+
+        this.tape_alphabet.splice(index, 1); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; 
     }
 
     toJSON(key: string) {

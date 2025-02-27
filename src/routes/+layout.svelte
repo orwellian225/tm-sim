@@ -9,6 +9,7 @@
 	import TuringMachine from "$lib/tm-engine/tm-machine.svelte";
 	import MenuControl from '$lib/components/MenuControl.svelte';
 	import MenuNavigation from '$lib/components/MenuNavigation.svelte';
+	import StateMenu from '$lib/components/StateMenu.svelte';
 
 	import { setContext } from "svelte";
 	import { page } from "$app/state";
@@ -37,7 +38,7 @@
 </script>
 
 <main class="flex gap-2 h-screen w-screen">
-	<div class="w-1/5 h-full px-2 flex flex-col gap-4">
+	<div class="w-1/5 min-w-[200px] h-full px-2 flex flex-col gap-4">
 		<div class="w-full h-fit">
 			<h1 class="text-4xl">Menu</h1>
 			<h2 class="text-2xl flex justify-between items-center">
@@ -57,11 +58,9 @@
 
 		</div>	
 
-		<div class="w-full h-fit">
+		<div class="w-full h-fit space-y-1">
 			<h1 class="text-4xl">Machine</h1>
-			<h2 class="text-2xl border-b-2 border-black">States</h2>
-			<h2 class="text-2xl border-b-2 border-black">Language Alphabet</h2>
-			<h2 class="text-2xl border-b-2 border-black">Tape Alphabet</h2>
+			<StateMenu />
 		</div>	
 	</div>
 
