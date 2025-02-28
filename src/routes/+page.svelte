@@ -2,4 +2,4 @@
 	import Panel from "$lib/components/Panel.svelte"
 </script>
 
-<Panel />
+<Panel close_callback={undefined} />

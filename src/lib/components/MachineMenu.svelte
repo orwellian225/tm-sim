@@ -4,9 +4,9 @@
 	import { PencilSimple } from "phosphor-svelte";
 	import { Separator } from "bits-ui";
 
-	import TuringMachine from "$lib/tm-engine/tm-machine.svelte";
+	import type TMFile from "$lib/tm-engine/tm-file.svelte";
 
-    let current_turing_machine: TuringMachine = getContext("current_turing_machine");
+    let current_turing_machine: TMFile = getContext("current_turing_machine");
     let show = $state(false);
 </script>
 
