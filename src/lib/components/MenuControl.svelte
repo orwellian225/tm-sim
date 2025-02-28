@@ -9,15 +9,15 @@
     let current_turing_machine: TMFile = getContext("current_turing_machine");
 
     function new_tm() {
-        current_turing_machine.identifier = "New TM"; 
-        current_turing_machine.machine = new TuringMachine( 
+        current_turing_machine.identifier = "New TM";
+        current_turing_machine.machine = new TuringMachine(
             // Reject empty string, accept any other string
             [ "qI", "qA", "qR" ],  ['0', '1'], ['b'],
             [
                 [ 0, 0, 2, 0, +1 ],
                 [ 0, 1, 1, 2, +1 ],
                 [ 0, 2, 1, 2, +1 ],
-            ].map(t => TuringMachine.transition_array_to_obj(t)), 
+            ].map(t => TuringMachine.transition_array_to_obj(t)),
             0, 1, 2
         );
         current_turing_machine.computations = [ "", "0", "1" ];
@@ -27,40 +27,23 @@
     const elements = [
         {
             text: "New",
-            onclick: () => { new_tm(); },
-            subelements: [] 
+            onclick: () => {},
+            subelements: [
+	           	{ text: "Save current and New", onclick: () => { current_turing_machine.download(); new_tm(); }, subelements:[] },
+	           	{ text: "Discard current and New", onclick: () => { new_tm(); }, subelements:[] }
+            ]
         },
         {
             text: "Save",
-            onclick: () => {
-                current_turing_machine.save();
-            },
-            subelements: [] 
+            onclick: () => {},
+            subelements: [
+            	{ text: "JSON", onclick: () => { current_turing_machine.download() }, subelements:[] }
+            ]
         },
         {
             text: "Load",
             onclick: () => {},
             subelements: [
-                {
-                    text: "Recent",
-                    onclick: () => {},
-                    subelements: localStorage.getItem("saved_machines") ? JSON.parse(localStorage.getItem("saved_machines")).slice(-5).map((json: any) => {
-                        const obj = JSON.parse(json);
-                        return {
-                            text: obj.identifier,
-                            onclick: () => {
-                                current_turing_machine.load(obj)
-                            },
-                            subelements: []
-                        }
-                    }) : [
-                        {
-                            text: "No recent files",
-                            onclick: () => {},
-                            subelements: []
-                        }
-                    ]
-                },
                 {
                     text: "From File",
                     onclick: () => {
@@ -81,7 +64,7 @@
 
                         file_upload.remove()
                     },
-                    subelements: [] 
+                    subelements: []
                 }
             ]
         },
@@ -90,26 +73,24 @@
             onclick: () => {},
             subelements: [
                 {
-                    text: "Download JSON",
-                    onclick: () => {
-                        current_turing_machine.download();
-                    },
-                    subelements: []
-                },
-                {
                     text: "Copy Transition Table",
                     onclick: () => {
                         navigator.clipboard.writeText(current_turing_machine.export_transition_table({}))
                             .then(() => console.log("Copied transition table to clipboard"))
                             .catch(err => console.error("Failed to copy transition table to clipboard", err));
                     },
-                    subelements: [] 
+                    subelements: []
                 }
             ]
         }
     ];
+    const menu_control = [{
+    	text: "File",
+     	onclick: () => {},
+      	subelements: elements
+    }]
 </script>
 
 <ul>
-    <RecursiveTextMenu values={elements} />
+    <RecursiveTextMenu values={menu_control} />
 </ul>

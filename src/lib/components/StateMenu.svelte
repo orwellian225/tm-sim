@@ -39,8 +39,8 @@
         <h2 class="text-2xl">States</h2>
 
         <span class="flex justify-evenly items-center gap-[1px]">
-            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => { 
-                current_turing_machine.machine.add_state("new_state"); 
+            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
+                current_turing_machine.machine.add_state("new_state");
                 current_turing_machine.diagram.push({ x: 0, y: 0 });
                 editing_state_idx = current_turing_machine.machine.states.length - 1;
                 editing_state_value = "new_state";
@@ -65,9 +65,9 @@
                         <p>* {state}</p>
                         <span class="flex justify-evenly items-center gap-[1px] pr-1">
                             <button class="border-[1px] w-[26px] h-[26px] p-1 border-black hover:bg-zinc-100 flex items-center justify-center" onclick={() => {
-                                if (modify_state_type == idx) 
+                                if (modify_state_type == idx)
                                     modify_state_type = -1;
-                                else 
+                                else
                                     modify_state_type = idx;
                             }}>
                                 {#if idx == current_turing_machine.machine.initial_state}
@@ -93,15 +93,15 @@
                             }}><TrashSimple size={16}/></button>
                         </span>
                     {:else}
-                        <span>* <input class="border-[1px] border-black" type="text" bind:value={editing_state_value} autofocus/></span>
+                        <span>* <input class="border-[1px] border-black w-4/5" type="text" bind:value={editing_state_value} autofocus/></span>
                         <span class="flex justify-evenly items-center gap-[1px] pr-1">
                             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                                current_turing_machine.machine.edit_state(idx, editing_state_value); 
+                                current_turing_machine.machine.edit_state(idx, editing_state_value);
                                 editing_state_value = "";
-                                editing_state_idx = -1; 
+                                editing_state_idx = -1;
                             }}><Check size={16}/></button>
                             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                                editing_state_value = ""; 
+                                editing_state_value = "";
                                 editing_state_idx = -1;
                             }}><X size={16}/></button>
                         </span>
@@ -112,7 +112,7 @@
                         <RecursiveTextMenu values={modify_state_values(idx)} />
                     </div>
                 {/if}
-            {/each} 
+            {/each}
         </ul>
     {/if}
 </div>

@@ -19,7 +19,7 @@
         <h2 class="text-2xl">Lang Alphabet</h2>
 
         <span class="flex justify-evenly items-center gap-[1px]">
-            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => { 
+            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
                 current_turing_machine.machine.add_lang_symbol("new_lang_symbol");
                 editing_symbol_idx = current_turing_machine.machine.lang_alphabet.length - 1;
                 editing_symbol_value = "new_lang_symbol";
@@ -52,15 +52,15 @@
                             }}><TrashSimple size={16}/></button>
                         </span>
                     {:else}
-                        <span>* <input class="border-[1px] border-black" type="text" bind:value={editing_symbol_value} autofocus/></span>
+                        <span>* <input class="border-[1px] border-black w-4/5" type="text" bind:value={editing_symbol_value} autofocus/></span>
                         <span class="flex justify-evenly items-center gap-[1px] pr-1">
                             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                                current_turing_machine.machine.edit_lang_symbol(idx, editing_symbol_value); 
+                                current_turing_machine.machine.edit_lang_symbol(idx, editing_symbol_value);
                                 editing_symbol_value = "";
-                                editing_symbol_idx = -1; 
+                                editing_symbol_idx = -1;
                             }}><Check size={16}/></button>
                             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                                editing_symbol_value = ""; 
+                                editing_symbol_value = "";
                                 editing_symbol_idx = -1;
                             }}><X size={16}/></button>
                         </span>
