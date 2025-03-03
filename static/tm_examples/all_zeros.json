@@ -1,0 +1,25 @@
+{
+	"identifier": "All Zeros",
+	"description": "",
+	"machine": {
+		"states": [ "step", "accept", "reject" ],
+		"lang_alphabet": [ "0", "1" ],
+		"tape_alphabet": [ "b" ],
+		"transitions": [
+			[ 0, 0, 1, 0, 1 ],
+			[ 0, 1, 0, 1, 1 ],
+			[ 0, 2, 2, 2, 1 ]
+		],
+		"initial_state": 0,
+		"accept_state": 1,
+		"reject_state": 2
+	},
+	"computation": [
+		"", "0", "00", "1", "10"
+	],
+	"diagram": [
+		{ "x": 0, "y": 0 },
+		{ "x": -10, "y": 0 },
+		{ "x": 10, "y": 0 }
+	]
+}

@@ -1,0 +1,29 @@
+{
+	"identifier": "Even String",
+	"description": "Tests if the inputted binary word is an even natural number. i.e. testing if the last (from left to right) bit is 0.",
+	"machine": {
+		"states": [ "to_end", "test", "accept", "reject" ],
+		"lang_alphabet": [ "0", "1" ],
+		"tape_alphabet": [ "b" ],
+		"transitions": [
+			[0, 0, 1, 0, -1],
+			[0, 1, 0, 1, 1],
+			[0, 2, 0, 2, 1],
+			[1, 0, 3, 0, 1],
+			[1, 1, 2, 1, 1],
+			[1, 2, 3, 2, 1]
+		],
+		"initial_state": 0,
+		"accept_state": 2,
+		"reject_state": 3
+	},
+	"computation": [
+		"", "10", "11", "01", "1111111110", "0000000001"
+	],
+	"diagram": [
+		{ "x": -10, "y": 0 },
+		{ "x": 0, "y": 0 },
+		{ "x": 10, "y": 10 },
+		{ "x": 10, "y": -10 }
+	]
+}
