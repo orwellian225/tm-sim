@@ -14,7 +14,7 @@
 		"accept_state": 1,
 		"reject_state": 2
 	},
-	"computation": [
+	"computations": [
 		"", "0", "00", "1", "10"
 	],
 	"diagram": [
