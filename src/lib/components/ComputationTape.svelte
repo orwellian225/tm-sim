@@ -90,10 +90,10 @@
         } else if (idx == -2) { // end of tape marker
             const triangle_size = 8;
             ctx.beginPath();
-                ctx.moveTo(x + 15 + triangle_size, y + 15 + 0);
+                ctx.moveTo(x + 15, y + 15 - triangle_size);
+                ctx.lineTo(x + 15 + triangle_size, y + 15 + triangle_size);
                 ctx.lineTo(x + 15 - triangle_size, y + 15 + triangle_size);
-                ctx.lineTo(x + 15 - triangle_size, y + 15 - triangle_size);
-                ctx.lineTo(x + 15 + triangle_size, y + 15 + 0);
+                ctx.lineTo(x + 15, y + 15 - triangle_size);
                 ctx.stroke();
             ctx.closePath();
         }
