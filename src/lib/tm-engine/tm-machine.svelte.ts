@@ -29,19 +29,59 @@ export default class TuringMachine {
 
     add_state(name: string) { this.states.push(name); }
     edit_state(index: number, new_name: string) { this.states[index] = new_name; }
-    remove_state(index: number) { this.states.splice(index, 1); }
+    remove_state(index: number) { 
+
+        this.states.splice(index, 1); 
+        const removed_transitions: Array<number> = [];
+        for (let i = 0; i < this.transitions.length; ++i)
+            if ( this.transitions[i].from_state == index || this.transitions[i].to_state == index )
+                removed_transitions.push(i);
+        this.transitions = this.transitions.filter((_, idx) => removed_transitions.indexOf(idx) == -1 ); // remove transitions not in array
+    }
 
     add_lang_symbol(symbol: string) { this.lang_alphabet.push(symbol); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
     edit_lang_symbol(index:number, symbol: string) { this.lang_alphabet[index] = symbol; this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
-    remove_lang_symbol(index:number) { this.lang_alphabet.splice(index, 1); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
+    remove_lang_symbol(index:number) {  // index is index of lang_alphabet array, not alphabet array
+        const removed_transitions: Array<number> = [];
+        const alphabet_index = this.tape_alphabet.length + index;
+        for (let i = 0; i < this.transitions.length; ++i)
+            if ( this.transitions[i].read_symbol == alphabet_index || this.transitions[i].write_symbol == alphabet_index)
+                removed_transitions.push(this.tape_alphabet.length + i);
+        this.transitions = this.transitions.filter((_, idx) => removed_transitions.indexOf(idx) == -1 ); // remove transitions not in array
 
-    add_tape_symbol(symbol: string) { this.tape_alphabet.push(symbol); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
+        this.lang_alphabet.splice(index, 1); 
+        this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; 
+    }
+
+    add_tape_symbol(symbol: string) { 
+        for (let transition of this.transitions) {
+            if (transition.read_symbol >= this.tape_alphabet.length)
+                transition.read_symbol += 1;
+            if (transition.write_symbol >= this.tape_alphabet.length)
+                transition.write_symbol += 1;
+        }
+
+        this.tape_alphabet.push(symbol); 
+        this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; 
+    }
     edit_tape_symbol(index:number, symbol: string) { this.tape_alphabet[index] = symbol; this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
     remove_tape_symbol(index:number) {
         if (index == 0)
             return; // can't remove blank symbol
 
-        this.tape_alphabet.splice(index, 1); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet];
+        const removed_transitions: Array<number> = [];
+        for (let i = 0; i < this.transitions.length; ++i) {
+            if ( this.transitions[i].read_symbol == index || this.transitions[i].write_symbol == index )
+                removed_transitions.push(i);
+            if (this.transitions[i].read_symbol >= this.tape_alphabet.length)
+                this.transitions[i].read_symbol -= 1;
+            if (this.transitions[i].write_symbol >= this.tape_alphabet.length)
+                this.transitions[i].write_symbol -= 1;
+        }
+        this.transitions = this.transitions.filter((_, idx) => removed_transitions.indexOf(idx) == -1 ); // remove transitions not in array
+
+        this.tape_alphabet.splice(index, 1); 
+        this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet];
     }
 
     find_transition(state_idx: number, symbol_idx: number): TMTransition | null {
