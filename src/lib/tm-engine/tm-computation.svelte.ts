@@ -48,12 +48,17 @@ export default class TMComputation {
     step() {
         if (this.status != 0) return;
 
-        let trans: TMTransition;
+        let trans: TMTransition | null = null
 		for (let i = 0; i < this.machine.transitions.length; ++i) {
 			trans = this.machine.transitions[i];
             if (trans.from_state == this.state && trans.read_symbol == this.tape[this.head])
                 break;
 		}
+
+        if (!trans) {
+            this.status = -1;
+            return;
+        }
 
         this.tape[this.head] = trans.write_symbol;
         this.head += trans.direction;

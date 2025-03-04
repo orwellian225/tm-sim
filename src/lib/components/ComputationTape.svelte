@@ -6,7 +6,9 @@
     import { ArrowCounterClockwise, Play, SkipForward, TrashSimple, MagnifyingGlassMinus, MagnifyingGlassPlus } from "phosphor-svelte";
 	import { onMount } from "svelte";
 
+    // ignoring warning because computation does not need to be $state for the canvas to update, which is all that matters here
     let computation: TMComputation = new TMComputation(machine, in_str);
+    $effect(() => { computation = new TMComputation(machine, in_str); });
 
     function status_to_string(status_value: number, computation_state: number): string {
         switch (status_value) {
@@ -17,7 +19,7 @@
             case 2: 
                 return "Rejected";
             default:
-                return "Err";
+                return "Error";
         }
     }
 
