@@ -9,13 +9,13 @@
 	let current_turing_machine: TMFile = getContext('current_turing_machine');
 </script>
 
-<ul class="space-y-1 p-1">
+<ul class="space-y-2 p-1">
 	{#each current_turing_machine.machine.states as state, state_idx}
 		{#each current_turing_machine.machine.alphabet as symbol, symbol_idx}
 			{@const transition: TMTransition | null = current_turing_machine.machine.find_transition(state_idx, symbol_idx)}
 			{@debug transition}
 			{#if state_idx != current_turing_machine.machine.accept_state && state_idx != current_turing_machine.machine.reject_state}
-				<li class="w-fit flex flex-row items-center justify-center gap-2">
+				<li class="w-fit flex flex-row items-center justify-center gap-2 h-8">
 					{state}
 					{symbol}
 					->
