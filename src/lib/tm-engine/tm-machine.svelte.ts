@@ -37,11 +37,19 @@ export default class TuringMachine {
 
     add_tape_symbol(symbol: string) { this.tape_alphabet.push(symbol); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
     edit_tape_symbol(index:number, symbol: string) { this.tape_alphabet[index] = symbol; this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; }
-    remove_tape_symbol(index:number) { 
+    remove_tape_symbol(index:number) {
         if (index == 0)
             return; // can't remove blank symbol
 
-        this.tape_alphabet.splice(index, 1); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet]; 
+        this.tape_alphabet.splice(index, 1); this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet];
+    }
+
+    find_transition(state_idx: number, symbol_idx: number): TMTransition | null {
+		for (let i = 0; i < this.transitions.length; ++i)
+			if (this.transitions[i].from_state == state_idx && this.transitions[i].read_symbol == symbol_idx)
+				return this.transitions[i];
+
+		return null;
     }
 
     toJSON(key: string) {
