@@ -3,12 +3,12 @@ import type { TMTransition } from "./tm-machine.svelte";
 
 export default class TMComputation {
 
-    machine: TuringMachine = $state(new TuringMachine([], [], [], [], -1, -1, -1));
-    input_str: string = $state("");
+    machine: TuringMachine;
+    input_str: string;
 
-    tape: Array<number> = $state([]);
-    head: number = $state(0);
-    state: number = $state(-1);
+    tape: Array<number>;
+    head: number;
+    state: number;
 
     status: number = $state(0); // 0: running, 1: accepted, 2: rejected
     resources: {

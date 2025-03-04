@@ -6,9 +6,7 @@
     import { ArrowCounterClockwise, Play, SkipForward, TrashSimple, MagnifyingGlassMinus, MagnifyingGlassPlus } from "phosphor-svelte";
 	import { onMount } from "svelte";
 
-    // ignoring warning because computation does not need to be $state for the canvas to update, which is all that matters here
-    let computation: TMComputation = new TMComputation(machine, in_str);
-    $effect(() => { computation = new TMComputation(machine, in_str); });
+    let computation: TMComputation = $derived(new TMComputation(machine, in_str));
 
     function status_to_string(status_value: number, computation_state: number): string {
         switch (status_value) {
@@ -115,6 +113,8 @@
                     draw_tape_head(30 * i, 13);
                 }
             }
+            if (computation.tape.length == 0)
+                draw_tape_head(0, 13);
 
             // draw a ghost tape i.e. unused cells
             for (let i = 0; i < computation.tape.length + 20; ++i) {
