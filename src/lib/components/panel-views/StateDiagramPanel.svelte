@@ -1,10 +1,13 @@
 <script lang="ts">
     import TMFile from "$lib/tm-engine/tm-file.svelte";
+    import type TMTransition from "$lib/tm-engine/tm-machine.svelte";
+
     import { getContext, onMount } from "svelte";
     import Camera from "$lib/canvas/camera";
 
-    import { Separator } from "bits-ui";
 	import StateObject from "$lib/canvas/StateCanvasObjects";
+    import TransitionObject from "$lib/canvas/TransitionCanvasObject";
+
     let current_turing_machine: TMFile = getContext("current_turing_machine")
 
     let canvas_parent: HTMLDivElement;
@@ -22,6 +25,8 @@
     const state_objects: Array<StateObject> = [];
     let dragging_state_idx: number = -1;
 
+    const transition_objects: Array<TransitionObject> = [];
+
     function update_objects() {
         state_objects.splice(0, state_objects.length);
         let state_modifier_flag;
@@ -35,6 +40,33 @@
                 ctx, current_turing_machine.diagram[i].x, current_turing_machine.diagram[i].y, 40,
                 current_turing_machine.machine.states[i], state_modifier_flag
             ));
+        }
+
+        transition_objects.splice(0, transition_objects.length);
+        for (let state_idx = 0; state_idx < current_turing_machine.machine.states.length; ++state_idx) {
+            for (let symbol_idx = 0; symbol_idx < current_turing_machine.machine.alphabet.length; ++symbol_idx) {
+                const transition: TMTransition | null = current_turing_machine.machine.find_transition(state_idx, symbol_idx);
+
+                if (transition) {
+                    transition_objects.push(new TransitionObject(
+                        ctx,
+                        { point: {x: state_objects[transition.from_state].position.x, y: state_objects[transition.from_state].position.y}, offset: 40 }, 
+                        { point: {x: state_objects[transition.to_state].position.x, y: state_objects[transition.to_state].position.y}, offset: 45 }, 
+                        current_turing_machine.machine.alphabet[symbol_idx], 
+                        current_turing_machine.machine.alphabet[transition.write_symbol], 
+                        transition.direction >= 1 ? "R" : transition.direction <= -1 ? "R" : "S",
+                        current_turing_machine.machine.alphabet.length, symbol_idx
+                    ));
+                } else {
+                    transition_objects.push(new TransitionObject(
+                        ctx,
+                        { point: {x: state_objects[state_idx].position.x, y: state_objects[state_idx].position.y}, offset: 40 }, 
+                        null,
+                        current_turing_machine.machine.alphabet[symbol_idx], null, null,
+                        current_turing_machine.machine.alphabet.length, symbol_idx
+                    ));
+                }
+            }
         }
     }
 
@@ -94,6 +126,9 @@
             for (let i = 0; i < state_objects.length; ++i)
                 state_objects[i].draw();
 
+            for (let i = 0; i < transition_objects.length; ++i)
+                transition_objects[i].draw();
+
         camera.end();
         requestAnimationFrame(draw);
     }
@@ -105,6 +140,6 @@
     }
 }} />
 
-<div bind:this={canvas_parent} class="w-full h-full border-2 border-purple-500">
+<div bind:this={canvas_parent} class="w-full h-full">
     <canvas bind:this={canvas} class="w-full h-full"></canvas>
 </div>
