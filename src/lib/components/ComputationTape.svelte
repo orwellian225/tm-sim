@@ -50,7 +50,6 @@
     onMount(() => {
         canvas.addEventListener("mousemove", (event: MouseEvent) => {
             if (camera_dragging) {
-                console.log("camera pos", camera.lookAt[0]); 
                 camera.moveTo(
                     camera.lookAt[0] - event.movementX > canvas.width * origin_width_ratio ? camera.lookAt[0] - event.movementX : canvas.width * origin_width_ratio,
                     camera.lookAt[1]

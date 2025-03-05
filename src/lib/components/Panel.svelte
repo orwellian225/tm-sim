@@ -2,15 +2,16 @@
 	import SplitPlane from "./SplitPlane.svelte";
 	import Panel from "./Panel.svelte";
 	import ComputationPanel from "./panel-views/ComputationPanel.svelte";
+	import TransitionTablePanel from "./panel-views/TransitionTablePanel.svelte";
+	import StateDiagramPanel from "./panel-views/StateDiagramPanel.svelte";
 
 	import { SquareSplitVertical, SquareSplitHorizontal, X } from "phosphor-svelte";
-	import TransitionTablePanel from "./panel-views/TransitionTablePanel.svelte";
 
 	let { close_callback = undefined }: { close_callback: (() => void) | undefined } = $props();
 	let split = $state(false);
 	let split_type: "vertical" | "horizontal" = $state("vertical");
 
-	let panel_type: number = $state(1);
+	let panel_type: number = $state(0);
 </script>
 
 {#snippet panel_control()}
@@ -33,7 +34,7 @@
 
 	<section class="h-[90%] w-full p-1 overflow-y-auto overflow-x-auto">
 		{#if panel_type == 0}
-			<h2>State Diagram</h2>
+			<StateDiagramPanel />
 		{:else if panel_type == 1}
 			<TransitionTablePanel />
 		{:else if panel_type == 2}

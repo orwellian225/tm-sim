@@ -16,7 +16,7 @@ export default class TMFile {
             this.diagram = diagram;
         } else {
             this.diagram = [];
-            const radius = (this.machine.states.length - 1) * 10;
+            const radius = (this.machine.states.length - 1) * 100;
             const angle = 2 * Math.PI / this.machine.states.length;
             for (let i = 0; i < this.machine.states.length; i++) {
                 this.diagram.push({x: radius * Math.cos(i * angle), y: radius * Math.sin(i * angle)});
