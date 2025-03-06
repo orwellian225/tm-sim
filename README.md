@@ -1,38 +1,39 @@
-# sv
+# Turing Machine Designer and Simulator
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## Motivation
 
-## Creating a project
+This simulator was built as an educational tool for use in the University of the Witwatersrand COMS3003A Course, Formal Languages and Automata.
+The tools helps visualize, program and test Turing Machines for decision problems, with the following definition:
+$$
+	TM = \left< Q, \Sigma, \Gamma, \delta, q_{initial}, q_{accept}, q_{reject} \right>
+$$
 
-If you're seeing this, you've probably already done this step. Congrats!
+* $Q$ - a set of states of the TM
+* $\Sigma$ - a set of symbols that form the input language alphabet
+* $\Gamma = {\_} \cup \Sigma \cup ...$ - a set of symbols that form the language alphabet the TM computes with
+* $\delta: Q \times \Gamma \rightarrow Q \times \Gamma \times {Left, Right}$
+* $q_{initial}$ - the initial state of the TM
+* $q_{accept}$ - the accept state of the TM
+* $q_{reject}$ - the reject state of the TM
 
-```bash
-# create a new project in the current directory
-npx sv create
+> [!TIP]
+> There are other formulations of Turing Machines, but this definition is from Sipser's [Introduction to the Theory of Computation](https://www.amazon.com/Introduction-Theory-Computation-Michael-Sipser/dp/113318779X)
 
-# create a new project in my-app
-npx sv create my-app
-```
+## Using the simulator
 
-## Developing
+The simulator can be broken down into 4 sections, the sidebar, state diagram, transtion table, and computations.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+1. In the sidebar, a user can edit the states, tape alphabet and language alphabet.
+2. The state diagram is a visualization of the machines states and transitions in the familiar format of moore diagrams.
+3. The transition table is an alternate visualization of the machine, by viewing its transitions as a table of functions.
+This can also be thought of as the 'program' of the Turing Machine.
+4. Computations are a visualization of the TM's tape during a computation, and can be stepped through with rudimentary debugging tools
 
-```bash
-npm run dev
+A TM is also saveble in a JSON format via `File > Save > JSON`, and then can later be uploaded with `File > Load > From File`.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## Running locally
 
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+1. `git clone`
+2. `cd`
+3. `npm install` / `bun install`
+4. `npm run dev` / `bun run dev`
