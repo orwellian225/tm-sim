@@ -14,8 +14,9 @@
 
 <div>
 	<div class="w-full flex justify-between items-center">
+		<input class="w-full  text-2xl" type="text" bind:value={current_turing_machine.identifier}>
 
-		{#if !edit_identifier}
+		<!-- {#if !edit_identifier}
 		    <h2 class="text-2xl">{current_turing_machine.identifier}</h2>
 		    <span class="flex justify-evenly items-center gap-[1px]">
 		        <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
@@ -31,7 +32,7 @@
 					current_turing_machine.identifier = edit_identifier_value;
 		        }}><Check size={20}/></button>
 		    </span>
-		{/if}
+		{/if} -->
 
 	</div>
 
