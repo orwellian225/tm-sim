@@ -42,8 +42,6 @@
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
                 current_turing_machine.machine.add_state("new_state");
                 current_turing_machine.diagram.push({ x: 0, y: 0 });
-                editing_state_idx = current_turing_machine.machine.states.length - 1;
-                editing_state_value = "new_state";
             }}><Plus size={20}/></button>
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => show_states = !show_states}>
                 {#if show_states}

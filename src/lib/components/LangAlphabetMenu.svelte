@@ -21,8 +21,6 @@
         <span class="flex justify-evenly items-center gap-[1px]">
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
                 current_turing_machine.machine.add_lang_symbol("new_lang_symbol");
-                editing_symbol_idx = current_turing_machine.machine.lang_alphabet.length - 1;
-                editing_symbol_value = "new_lang_symbol";
             }}><Plus size={20}/></button>
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => show_alphabet = !show_alphabet}>
                 {#if show_alphabet}
