@@ -4,7 +4,7 @@
 	"machine": {
 		"states": [ "to_end", "test", "accept", "reject" ],
 		"lang_alphabet": [ "0", "1" ],
-		"tape_alphabet": [ "b" ],
+		"tape_alphabet": [ "␣" ],
 		"transitions": [
 			[0, 0, 1, 0, -1],
 			[0, 1, 0, 1, 1],

@@ -25,7 +25,7 @@
 		"New TM",
 		new TuringMachine(
 			// Reject empty string, accept any other string
-			[ "qI", "qA", "qR" ],  ['0', '1'], ['b'],
+			[ "qI", "qA", "qR" ],  ['0', '1'], ['␣'],
 			[
 				[ 0, 0, 2, 0, +1 ],
 				[ 0, 1, 0, 2, +1 ],
