@@ -91,6 +91,14 @@ export default class TuringMachine {
 
 		return null;
     }
+    find_state_transition(state_idx: number) : Array<TMTransition> {
+        const result: Array<TMTransition> = [];
+        for (let i = 0; i < this.transitions.length; ++i)
+            if (this.transitions[i].from_state == state_idx)
+                result.push(this.transitions[i]);
+
+        return result;
+    }
 
     toJSON(key: string) {
         return {

@@ -5,9 +5,9 @@ export default class TMFile {
 
     machine: TuringMachine = $state(new TuringMachine([], [], [], [], 0, 0, 0));
     computations: Array<string> = $state([]);
-    diagram: Array<{x: number, y: number}> = $state([]); // Parallel array to machine.states
+    diagram: Array<{x: number, y: number, fallback_transition_angles: Array<number> }> = $state([]); // Parallel array to machine.states
 
-    constructor(identifier: string, machine: TuringMachine, computations: Array<string>, diagram: Array<{x: number, y: number}> | null = null) {
+    constructor(identifier: string, machine: TuringMachine, computations: Array<string>, diagram: Array<{x: number, y: number, fallback_transition_angles: Array<number>}> | null = null) {
         this.identifier = identifier;
         this.machine = machine;
         this.computations = computations;
@@ -19,7 +19,11 @@ export default class TMFile {
             const radius = (this.machine.states.length - 1) * 100;
             const angle = 2 * Math.PI / this.machine.states.length;
             for (let i = 0; i < this.machine.states.length; i++) {
-                this.diagram.push({x: radius * Math.cos(i * angle), y: radius * Math.sin(i * angle)});
+                this.diagram.push({
+                    x: radius * Math.cos(i * angle), 
+                    y: radius * Math.sin(i * angle),
+                    fallback_transition_angles: machine.alphabet.map((_, idx) => idx * 2 * Math.PI / machine.alphabet.length)
+                });
             }
         }
     }
@@ -27,7 +31,7 @@ export default class TMFile {
     add_computation(computation: string) { return this.computations.push(computation); }
     remove_computation(index: number) { this.computations.splice(index, 1); }
 
-    add_diagram_point(point: {x: number, y: number}) { return this.diagram.push(point); }
+    add_diagram_point(point: {x: number, y: number, fallback_transition_angles: Array<number> }) { return this.diagram.push(point); }
     remove_diagram_point(index: number) { this.diagram.splice(index, 1); }
 
     download() {

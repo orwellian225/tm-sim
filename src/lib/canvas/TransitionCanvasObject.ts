@@ -10,7 +10,7 @@ export default class TransitionObject {
     from_point: TransitionRenderPoint;
     to_point: TransitionRenderPoint | null;
 
-    transitions: Array<{ read_symbol: string, write_symbol: string | null, direction: string | null }>;
+    transitions: Array<{ state_modifier: number, state_idx: number, read_symbol_idx: number, read_symbol: string, write_symbol: string | null, direction: string | null }>;
 
     text_offset: number = 15;
     notch_radius: number = 7;
@@ -18,7 +18,7 @@ export default class TransitionObject {
     constructor(
         ctx: CanvasRenderingContext2D, 
         from_point: TransitionRenderPoint, to_point: TransitionRenderPoint | null = null,
-        transitions: Array<{ read_symbol: string, write_symbol: string | null, direction: string | null }>
+        transitions: Array<{ state_modifier: number, state_idx: number, read_symbol_idx: number, read_symbol: string, write_symbol: string | null, direction: string | null }>
     ) {
         this.ctx = ctx;
         this.from_point = from_point;
@@ -26,11 +26,27 @@ export default class TransitionObject {
         this.transitions = transitions;
     }
 
-    click_collide(x: number, y: number): boolean {
-        return false;
+    click_collides(x: number, y: number): boolean {
+        let radial_x: number, radial_y: number;
+        if (this.to_point == null || 
+            (this.to_point.point.x == this.from_point.point.x && this.to_point.point.y == this.from_point.point.y)
+        ) {
+            radial_x = x - this.from_point.offset_point.x;
+            radial_y = y - this.from_point.offset_point.y;
+        } else {
+            radial_x = x - this.to_point.offset_point.x;
+            radial_y = y - this.to_point.offset_point.y;
+        }
+
+        let radial_length = Math.sqrt(radial_x * radial_x + radial_y * radial_y);
+
+        return radial_length <= this.notch_radius * 1.3;
     }
 
     draw() {
+        if ((this.transitions[0].state_modifier & 1) == 1 || (this.transitions[0].state_modifier & 2) == 2)
+            return;
+
         this.ctx.strokeStyle = "black";
         this.ctx.fillStyle = "black";
         this.ctx.lineWidth = 2;
@@ -38,12 +54,24 @@ export default class TransitionObject {
         this.ctx.textAlign = "center";
         this.ctx.textBaseline = "middle";
 
+        if (this.to_point == null || 
+            (this.to_point.point.x == this.from_point.point.x && this.to_point.point.y == this.from_point.point.y)
+        ) {
+            this.ctx.beginPath();
+                this.ctx.arc(
+                    this.from_point.offset_point.x, 
+                    this.from_point.offset_point.y, 
+                    this.notch_radius, 0, 2 * Math.PI
+                );
+                this.ctx.fill();
+            this.ctx.closePath();
+        }
+
         if (this.to_point == null) {
             const text_vec = {
                 x: this.from_point.offset_point.x + (this.notch_radius + this.text_offset) * Math.cos(this.from_point.offset_angle),
                 y: this.from_point.offset_point.y + (this.notch_radius + this.text_offset) * Math.sin(this.from_point.offset_angle),
             }
-
             this.ctx.beginPath();
                 this.ctx.arc(
                     this.from_point.offset_point.x, 

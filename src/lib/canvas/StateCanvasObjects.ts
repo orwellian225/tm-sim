@@ -15,6 +15,11 @@ export default class StateObject {
         this.radius = radius;
         this.state_name = state_name;
 
+        this.update_state_modifier(state_modifier_flag);
+    }
+
+    update_state_modifier(state_modifier_flag: number) {
+        this.state_modifiers.splice(0, this.state_modifiers.length);
         if ((state_modifier_flag & 1) == 1) { this.state_modifiers.push('#00c850'); }
         if ((state_modifier_flag & 2) == 2) { this.state_modifiers.push('#fb2c36'); }
         if ((state_modifier_flag & 4) == 4) { this.state_modifiers.push('#2b7fff'); }

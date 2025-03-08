@@ -7,7 +7,7 @@
 
 	import { SquareSplitVertical, SquareSplitHorizontal, X } from "phosphor-svelte";
 
-	let { close_callback = undefined, initial_panel = 0, initial_split = false }: { close_callback: (() => void) | undefined, number, boolean } = $props();
+	let { close_callback = undefined, initial_panel = 0, initial_split = false }: { close_callback: (() => void) | undefined, initial_panel: number, initial_split: boolean } = $props();
 	let split = $state(initial_split);
 	let split_type: "vertical" | "horizontal" = $state("horizontal");
 
