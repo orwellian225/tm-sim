@@ -33,7 +33,7 @@
 			].map(t => TuringMachine.transition_array_to_obj(t)),
 			0, 1, 2
 		),
-		[ "", "0", "1" ],
+		[ "␣", "0", "1" ],
 	));
 	setContext("current_turing_machine", current_turing_machine );
 

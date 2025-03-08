@@ -19,6 +19,9 @@
     {#if add_computation}
         <input class="w-1/2 border-2 border-black text-xl" bind:value={add_computation_input}>
         <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
+            if (add_computation_input = "")
+                add_computation_input = current_turing_machine.machine.alphabet[0];
+
             current_turing_machine.add_computation(add_computation_input);
             add_computation = false;
         }}><Check size={20} /></button>
