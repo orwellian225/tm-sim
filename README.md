@@ -10,7 +10,7 @@ $$
 
 * $Q$ - a set of states of the TM
 * $\Sigma$ - a set of symbols that form the input language alphabet
-* $\Gamma = {\textvisiblespace} \cup \Sigma \cup $ - a set of symbols that form the language alphabet the TM computes with
+* $\Gamma = {\textvisiblespace} \cup \Sigma \cup$ - a set of symbols that form the language alphabet the TM computes with
 * $\delta: Q \times \Gamma \rightarrow Q \times \Gamma \times {Left, Right}$
 * $q_{initial}$ - the initial state of the TM
 * $q_{accept}$ - the accept state of the TM
