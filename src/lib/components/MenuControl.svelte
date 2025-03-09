@@ -9,20 +9,13 @@
     let current_turing_machine: TMFile = getContext("current_turing_machine");
 
     function new_tm() {
-        current_turing_machine.identifier = "New TM";
-        current_turing_machine.machine = new TuringMachine(
-            // Reject empty string, accept any other string
-            [ "qI", "qA", "qR" ],  ['0', '1'], ['b'],
-            [
-                [ 0, 0, 2, 0, +1 ],
-                [ 0, 1, 1, 2, +1 ],
-                [ 0, 2, 1, 2, +1 ],
-            ].map(t => TuringMachine.transition_array_to_obj(t)),
-            0, 1, 2
-        );
-        current_turing_machine.computations = [ "", "0", "1" ];
+        const default_tm = TMFile.default();
+        // can't just assign default because it doesn't trigger updates
+        current_turing_machine.identifier = default_tm.identifier;
+        current_turing_machine.machine = default_tm.machine;
+        current_turing_machine.computations = default_tm.computations;
+        current_turing_machine.diagram = default_tm.diagram;
     }
-
 
     const elements = [
         {

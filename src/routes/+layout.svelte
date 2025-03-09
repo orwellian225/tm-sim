@@ -6,7 +6,6 @@
 	// ---------------------------------------------------------
 
 	import TMFile from "$lib/tm-engine/tm-file.svelte";
-	import TuringMachine from "$lib/tm-engine/tm-machine.svelte";
 	import MenuControl from '$lib/components/MenuControl.svelte';
 	import MenuNavigation from '$lib/components/MenuNavigation.svelte';
 	import StateMenu from '$lib/components/StateMenu.svelte';
@@ -19,26 +18,7 @@
 	import MachineMenu from '$lib/components/MachineMenu.svelte';
 
 
-	let current_turing_machine = $state(new TMFile(
-		"New TM",
-		new TuringMachine(
-			// Reject empty string, accept any other string
-			[ "qI", "qA", "qR" ],  ['0', '1'], ['␣'],
-			[
-				[ 0, 0, 2, 0, +1 ],
-				[ 0, 1, 0, 2, +1 ],
-				[ 0, 2, 1, 2, +1 ],
-				[ 1, 0, null, null, null ],
-				[ 1, 1, null, null, null ],
-				[ 1, 2, null, null, null ],
-				[ 2, 0, null, null, null ],
-				[ 2, 1, null, null, null ],
-				[ 2, 2, null, null, null ]
-			].map(t => TuringMachine.transition_array_to_obj(t)),
-			0, 1, 2
-		),
-		[ "␣", "0", "1" ],
-	));
+	let current_turing_machine = $state(TMFile.default());
 	setContext("current_turing_machine", current_turing_machine );
 
 </script>

@@ -89,12 +89,10 @@ export default class TuringMachine {
         this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet];
     }
 
-    find_transition(state_idx: number, symbol_idx: number): TMTransition | null {
+    find_transition(state_idx: number, symbol_idx: number): TMTransition {
 		for (let i = 0; i < this.transitions.length; ++i)
 			if (this.transitions[i].from_state == state_idx && this.transitions[i].read_symbol == symbol_idx)
 				return this.transitions[i];
-
-		return null;
     }
     find_state_transition(state_idx: number) : Array<TMTransition> {
         const result: Array<TMTransition> = [];
