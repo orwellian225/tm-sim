@@ -97,7 +97,7 @@ export class DiagramTransition {
     transition: TMTransition;
 
     static notch_radius = 7;
-    static text_offset = 15;
+    static text_offset = 20;
 
     constructor(
         origin_point: TransitionRenderPoint, terminal_point: TransitionRenderPoint | null, fallback_angle: number,
@@ -227,10 +227,10 @@ export class DiagramTransition {
             ctx.translate(midpoint.x, midpoint.y);
             ctx.rotate(rotation);
             //@ts-ignore
-            const text = `${this.machine.alphabet[this.transition.read_symbol]} -> ${this.machine.alphabet[this.transition.write_symbol]}, ${DiagramTransition.string_direction(this.transition.direction)}` ;
+            const text = `${this.machine.alphabet[this.transition.read_symbol]} → ${this.machine.alphabet[this.transition.write_symbol]}, ${DiagramTransition.string_direction(this.transition.direction)}` ;
             if (rotation > Math.PI / 2 && rotation < 3 * Math.PI / 2)
                 ctx.scale(-1,-1);
-            ctx.fillText( text, 0, 1 * DiagramTransition.text_offset );
+            ctx.fillText( text, 0, (this.transition.read_symbol + 1) * DiagramTransition.text_offset );
             ctx.scale(1,1);
             ctx.restore();
             
@@ -268,7 +268,7 @@ export class DiagramTransition {
                 return "S";
             case 1:
                 return "R";
-            case 2:
+            case -1:
                 return "L"
             default:
                 return direction < 0 ? `${Math.abs(direction)}L` : `${direction}R`;
