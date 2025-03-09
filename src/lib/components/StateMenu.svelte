@@ -7,7 +7,7 @@
 
 	import type TMFile from "$lib/tm-engine/tm-file.svelte";
 
-    let current_turing_machine: TMFile = getContext("current_turing_machine");
+    let current_tm: TMFile = getContext("current_turing_machine");
 
     let show_states = $state(true);
 
@@ -22,12 +22,27 @@
             // { text: "Delete state" , onclick: () => { modify_state_type = -1; }, subelements: [] },
         ];
 
-        if (idx != current_turing_machine.machine.initial_state)
-            result.push({ text: "Make initial state", onclick: () => { current_turing_machine.machine.initial_state = idx; modify_state_type = -1; }, subelements: [] });
-        if (idx != current_turing_machine.machine.accept_state)
-            result.push({ text: "Make accept state", onclick: () => { current_turing_machine.machine.accept_state = idx; modify_state_type = -1; }, subelements: [] });
-        if (idx != current_turing_machine.machine.reject_state)
-            result.push({ text: "Make reject state", onclick: () => { current_turing_machine.machine.reject_state = idx; modify_state_type = -1; }, subelements: [] });
+        if (idx != current_tm.machine.initial_state)
+            result.push({ text: "Make initial state", onclick: () => { 
+                const old_idx = current_tm.machine.initial_state;
+                current_tm.machine.initial_state = idx; modify_state_type = -1; 
+                current_tm.diagram.states[old_idx].update_modifiers();
+                current_tm.diagram.states[idx].update_modifiers();
+            }, subelements: [] });
+        if (idx != current_tm.machine.accept_state)
+            result.push({ text: "Make accept state", onclick: () => { 
+                const old_idx = current_tm.machine.accept_state;
+                current_tm.machine.accept_state = idx; modify_state_type = -1; 
+                current_tm.diagram.states[old_idx].update_modifiers();
+                current_tm.diagram.states[idx].update_modifiers();
+            }, subelements: [] });
+        if (idx != current_tm.machine.reject_state)
+            result.push({ text: "Make reject state", onclick: () => { 
+                const old_idx = current_tm.machine.reject_state;
+                current_tm.machine.reject_state = idx; modify_state_type = -1; 
+                current_tm.diagram.states[old_idx].update_modifiers();
+                current_tm.diagram.states[idx].update_modifiers();
+            }, subelements: [] });
 
         return result;
     }
@@ -40,8 +55,7 @@
 
         <span class="flex justify-evenly items-center gap-[1px]">
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                current_turing_machine.machine.add_state("new_state");
-                current_turing_machine.diagram.push({ x: 0, y: 0 });
+                current_tm.add_state("new_state");
             }}><Plus size={20}/></button>
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => show_states = !show_states}>
                 {#if show_states}
@@ -57,7 +71,7 @@
 
     {#if show_states}
         <ul class="space-y-[1px] max-h-[200px] overflow-y-auto">
-            {#each current_turing_machine.machine.states as state, idx}
+            {#each current_tm.machine.states as state, idx}
                 <li class="flex justify-between items-center">
                     {#if editing_state_idx != idx}
                         <p>* {state}</p>
@@ -70,27 +84,27 @@
 	                                else
 	                                    modify_state_type = idx;
 	                            }}>
-	                                {#if idx == current_turing_machine.machine.initial_state}
+	                                {#if idx == current_tm.machine.initial_state}
 	                                    <div class="w-full h-full bg-blue-500"></div>
 	                                {/if}
-	                                {#if idx == current_turing_machine.machine.accept_state}
+	                                {#if idx == current_tm.machine.accept_state}
 	                                    <div class="w-full h-full bg-green-500"></div>
 	                                {/if}
-	                                {#if idx == current_turing_machine.machine.reject_state}
+	                                {#if idx == current_tm.machine.reject_state}
 	                                    <div class="w-full h-full bg-red-500"></div>
 	                                {/if}
-	                                {#if idx != current_turing_machine.machine.initial_state && idx != current_turing_machine.machine.accept_state && idx != current_turing_machine.machine.reject_state}
+	                                {#if idx != current_tm.machine.initial_state && idx != current_tm.machine.accept_state && idx != current_tm.machine.reject_state}
 	                                    >
 	                                {/if}
 	                            </button></Tooltip.Trigger>
 								<Tooltip.Content><div class="p-1 w-fit flex flex-col justify-start items-center bg-white border-black border-[1px]">
-							        {#if idx == current_turing_machine.machine.initial_state}
+							        {#if idx == current_tm.machine.initial_state}
 										<p>Initial State</p>
 							        {/if}
-							        {#if idx == current_turing_machine.machine.accept_state}
+							        {#if idx == current_tm.machine.accept_state}
 										<p>Accept State</p>
 							        {/if}
-							        {#if idx == current_turing_machine.machine.reject_state}
+							        {#if idx == current_tm.machine.reject_state}
 										<p>Reject State</p>
 							        {/if}
 								</div></Tooltip.Content>
@@ -100,15 +114,14 @@
                                 editing_state_value = state;
                             }}><PencilSimple size={16}/></button>
                             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                                current_turing_machine.machine.remove_state(idx)
-                                current_turing_machine.diagram.splice(idx, 1);
+                                current_tm.remove_state(idx)
                             }}><TrashSimple size={16}/></button>
                         </span>
                     {:else}
                         <span>* <input class="border-[1px] border-black w-4/5" type="text" bind:value={editing_state_value} autofocus/></span>
                         <span class="flex justify-evenly items-center gap-[1px] pr-1">
                             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                                current_turing_machine.machine.edit_state(idx, editing_state_value);
+                                current_tm.edit_state(idx, editing_state_value);
                                 editing_state_value = "";
                                 editing_state_idx = -1;
                             }}><Check size={16}/></button>

@@ -36,10 +36,9 @@
 						<button
 							class="border-[1px] p-1 border-black hover:bg-zinc-100"
 							onclick={() => {
-								current_turing_machine.machine.transitions.splice(
-									current_turing_machine.machine.transitions.indexOf(transition),
-									1
-								);
+								transition.to_state = null;
+								transition.write_symbol = null;
+								transition.direction = null;
 							}}><TrashSimple size={18} /></button
 						>
 					{:else}
