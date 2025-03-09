@@ -116,7 +116,7 @@ export default class TMFile {
             };
             this.diagram.transitions.push(new DiagramTransition(
                 origin_point, null, 2 * Math.PI / this.machine.alphabet.length * symbol_idx,
-                symbol_idx, this.machine
+                this.machine.transitions.length - 1, this.machine
             ));
         }
 
