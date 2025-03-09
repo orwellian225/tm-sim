@@ -1,10 +1,8 @@
 <script lang="ts">
 	import TMFile from '$lib/tm-engine/tm-file.svelte';
-	import TMTransition from '$lib/tm-engine/tm-machine.svelte';
 	import { getContext } from 'svelte';
 
 	import { TrashSimple } from 'phosphor-svelte';
-	import { Currency } from 'lucide-svelte';
 	import DiagramState from '$lib/tm-engine/tm-diagram';
 
 	let current_tm: TMFile = getContext('current_turing_machine');
