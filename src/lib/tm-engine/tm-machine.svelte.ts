@@ -1,9 +1,9 @@
 export type TMTransition = {
     from_state: number;
     read_symbol: number;
-    to_state: number;
-    write_symbol: number;
-    direction: number;
+    to_state: number | null;
+    write_symbol: number | null;
+    direction: number | null;
 }
 
 export default class TuringMachine {
@@ -30,7 +30,6 @@ export default class TuringMachine {
     add_state(name: string) { this.states.push(name); }
     edit_state(index: number, new_name: string) { this.states[index] = new_name; }
     remove_state(index: number) { 
-
         this.states.splice(index, 1); 
         const removed_transitions: Array<number> = [];
         for (let i = 0; i < this.transitions.length; ++i)
@@ -54,7 +53,10 @@ export default class TuringMachine {
     }
 
     add_tape_symbol(symbol: string) { 
-        for (let transition of this.transitions) {
+        for (let [i, transition] of this.transitions.entries()) {
+            if (!transition.to_state || !transition.write_symbol || !transition.direction)
+                continue;
+
             if (transition.read_symbol >= this.tape_alphabet.length)
                 transition.read_symbol += 1;
             if (transition.write_symbol >= this.tape_alphabet.length)
@@ -70,13 +72,16 @@ export default class TuringMachine {
             return; // can't remove blank symbol
 
         const removed_transitions: Array<number> = [];
-        for (let i = 0; i < this.transitions.length; ++i) {
-            if ( this.transitions[i].read_symbol == index || this.transitions[i].write_symbol == index )
+        for (let [i, transition] of this.transitions.entries()) {
+            if (!transition.to_state || !transition.write_symbol || !transition.direction)
+                continue;
+
+            if ( transition.read_symbol == index || transition.write_symbol == index )
                 removed_transitions.push(i);
-            if (this.transitions[i].read_symbol >= this.tape_alphabet.length)
-                this.transitions[i].read_symbol -= 1;
-            if (this.transitions[i].write_symbol >= this.tape_alphabet.length)
-                this.transitions[i].write_symbol -= 1;
+            if (transition.read_symbol >= this.tape_alphabet.length)
+                transition.read_symbol -= 1;
+            if (transition.write_symbol >= this.tape_alphabet.length)
+                transition.write_symbol -= 1;
         }
         this.transitions = this.transitions.filter((_, idx) => removed_transitions.indexOf(idx) == -1 ); // remove transitions not in array
 
@@ -84,12 +89,18 @@ export default class TuringMachine {
         this.alphabet = [...this.tape_alphabet, ...this.lang_alphabet];
     }
 
-    find_transition(state_idx: number, symbol_idx: number): TMTransition | null {
+    find_transition(state_idx: number, symbol_idx: number): TMTransition {
 		for (let i = 0; i < this.transitions.length; ++i)
 			if (this.transitions[i].from_state == state_idx && this.transitions[i].read_symbol == symbol_idx)
 				return this.transitions[i];
+    }
+    find_state_transition(state_idx: number) : Array<TMTransition> {
+        const result: Array<TMTransition> = [];
+        for (let i = 0; i < this.transitions.length; ++i)
+            if (this.transitions[i].from_state == state_idx)
+                result.push(this.transitions[i]);
 
-		return null;
+        return result;
     }
 
     toJSON(key: string) {
@@ -115,7 +126,7 @@ export default class TuringMachine {
     static transition_obj_to_array(obj: TMTransition) {
         return [obj.from_state, obj.read_symbol, obj.to_state, obj.write_symbol, obj.direction];
     }
-    static transition_array_to_obj(array: Array<number>) {
+    static transition_array_to_obj(array: Array<number | null>) {
         return {
             from_state: array[0],
             read_symbol: array[1],

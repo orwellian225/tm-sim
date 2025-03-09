@@ -7,11 +7,11 @@
 
 	import { SquareSplitVertical, SquareSplitHorizontal, X } from "phosphor-svelte";
 
-	let { close_callback = undefined }: { close_callback: (() => void) | undefined } = $props();
-	let split = $state(false);
-	let split_type: "vertical" | "horizontal" = $state("vertical");
+	let { close_callback = undefined, initial_panel = 0, initial_split = false }: { close_callback: (() => void) | undefined, initial_panel: number, initial_split: boolean } = $props();
+	let split = $state(initial_split);
+	let split_type: "vertical" | "horizontal" = $state("horizontal");
 
-	let panel_type: number = $state(0);
+	let panel_type: number = $state(initial_panel);
 </script>
 
 {#snippet panel_control()}
@@ -40,7 +40,7 @@
 		{:else if panel_type == 2}
 			<ComputationPanel />
 		{/if}
-	
+
 	</section>
 </div>
 {/snippet}
@@ -51,7 +51,7 @@
 			{@render panel_control()}
 		{/snippet}
 		{#snippet b()}
-			<Panel close_callback={() => { split = false; }}/>
+			<Panel close_callback={() => { split = false; }} />
 		{/snippet}
 	</SplitPlane>
 {:else}
