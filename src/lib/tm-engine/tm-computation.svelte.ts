@@ -8,7 +8,7 @@ export default class TMComputation {
 
     tape: Array<number>;
     head: number;
-    state: number;
+    state: number = $state(0);
 
     status: number = $state(0); // 0: running, 1: accepted, 2: rejected
     resources: {

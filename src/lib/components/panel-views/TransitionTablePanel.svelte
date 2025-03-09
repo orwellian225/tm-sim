@@ -15,7 +15,7 @@
 		{#if transition.from_state != current_tm.machine.accept_state && transition.from_state != current_tm.machine.reject_state}
 			<li class="w-fit flex flex-row items-center justify-center gap-2 h-8">
 				{current_tm.machine.states[transition.from_state]},
-				{current_tm.machine.states[transition.read_symbol]}
+				{current_tm.machine.alphabet[transition.read_symbol]}
 				->
 				{#if transition.to_state !== null}
 					<select bind:value={transition.to_state} onchange={() => {
