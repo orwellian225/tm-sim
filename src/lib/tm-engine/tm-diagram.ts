@@ -157,6 +157,11 @@ export class DiagramTransition {
         }
     }
 
+    update_index(new_index: number) {
+        this.transition_idx = new_index;
+        this.transition = this.machine.transitions[new_index];
+    }
+
     draw(ctx: CanvasRenderingContext2D): void {
         ctx.strokeStyle = "black";
         ctx.fillStyle = "black";
@@ -189,7 +194,7 @@ export class DiagramTransition {
             ctx.closePath();
         }
 
-        if (this.transition.to_state != null) {
+        if (this.transition.to_state != null && this.terminal_point != null) {
             const origin_terminal = { x: this.origin_point.state_position.x - this.terminal_point.state_position.x, y: this.origin_point.state_position.y - this.terminal_point.state_position.y };
             const line_length = Math.sqrt(origin_terminal.x * origin_terminal.x + origin_terminal.y * origin_terminal.y);
             const norm_line_length = 10 / line_length > 1. ? 1. : 10 / line_length;

@@ -19,45 +19,78 @@ export default class TMFile {
         if (diagram) {
             this.diagram = diagram;
         } else {
-            const radius = 200;
-            const position_angle = 2 * Math.PI / machine.states.length;
             this.diagram = {
-                states: machine.states.map((obj, idx) => { 
-                    return new DiagramState({
-                        x: radius * Math.cos(position_angle * idx + Math.PI),
-                        y: radius * Math.sin(position_angle * idx + Math.PI),
-                    }, idx, machine);
-                }),
-                transitions: machine.transitions.map((obj, idx) => {
-                    const origin_point: TransitionRenderPoint = {
-                        state_position: {
-                            x: radius * Math.cos(position_angle * obj.from_state + Math.PI),
-                            y: radius * Math.sin(position_angle * obj.from_state + Math.PI),
-                        },
-                        radius: DiagramState.radius,
-                        angle: obj.to_state != null && obj.to_state != obj.from_state ? Math.atan2(
-                            radius * Math.sin(position_angle * obj.to_state + Math.PI) - radius * Math.sin(position_angle * obj.from_state + Math.PI),
-                            radius * Math.cos(position_angle * obj.to_state + Math.PI) - radius * Math.cos(position_angle * obj.from_state + Math.PI),
-                        ) : obj.read_symbol * 2 * Math.PI / machine.alphabet.length
-                    };
-                    const terminal_point: TransitionRenderPoint | null = obj.to_state != null ? {
-                        state_position: {
-                            x: radius * Math.cos(position_angle * obj.to_state + Math.PI),
-                            y: radius * Math.sin(position_angle * obj.to_state + Math.PI),
-                        },
-                        radius: DiagramState.radius + 5,
-                        angle: obj.to_state != obj.from_state ? Math.atan2(
-                            radius * Math.sin(position_angle * obj.from_state + Math.PI) - radius * Math.sin(position_angle * obj.to_state + Math.PI),
-                            radius * Math.cos(position_angle * obj.from_state + Math.PI) - radius * Math.cos(position_angle * obj.to_state + Math.PI),
-                        ) : origin_point.angle + Math.PI / 3,
-                    } : null;
-                    return new DiagramTransition(
-                        origin_point, terminal_point, obj.read_symbol * 2 * Math.PI / machine.alphabet.length, 
-                        idx, this.machine
-                    );
-                })
+                states: this.build_states(),
+                transitions: this.build_transitions()
             };
         }
+    }
+
+    build_states(from_scratch: boolean = true): Array<DiagramState> {
+        const radius = 200;
+        const position_angle = 2 * Math.PI / this.machine.states.length;
+        return this.machine.states.map((obj, idx) => { 
+            return new DiagramState({
+                x: from_scratch ? radius * Math.cos(position_angle * idx + Math.PI) : this.diagram.states[idx].position.x,
+                y: from_scratch ? radius * Math.sin(position_angle * idx + Math.PI) : this.diagram.states[idx].position.y,
+            }, idx, this.machine);
+        });
+    }
+
+    build_transitions(from_scratch: boolean = true): Array<DiagramTransition> {
+        const radius = 200;
+        const position_angle = 2 * Math.PI / this.machine.states.length;
+        return this.machine.transitions.map((obj, idx) => {
+            const origin_point: TransitionRenderPoint = {
+                state_position: {
+                    x: radius * Math.cos(position_angle * obj.from_state + Math.PI),
+                    y: radius * Math.sin(position_angle * obj.from_state + Math.PI),
+                },
+                radius: DiagramState.radius,
+                angle: obj.to_state != null && obj.to_state != obj.from_state ? Math.atan2(
+                    radius * Math.sin(position_angle * obj.to_state + Math.PI) - radius * Math.sin(position_angle * obj.from_state + Math.PI),
+                    radius * Math.cos(position_angle * obj.to_state + Math.PI) - radius * Math.cos(position_angle * obj.from_state + Math.PI),
+                ) : obj.read_symbol * 2 * Math.PI / this.machine.alphabet.length
+            };
+            const terminal_point: TransitionRenderPoint | null = obj.to_state != null ? {
+                state_position: {
+                    x: radius * Math.cos(position_angle * obj.to_state + Math.PI),
+                    y: radius * Math.sin(position_angle * obj.to_state + Math.PI),
+                },
+                radius: DiagramState.radius + 5,
+                angle: obj.to_state != obj.from_state ? Math.atan2(
+                    radius * Math.sin(position_angle * obj.from_state + Math.PI) - radius * Math.sin(position_angle * obj.to_state + Math.PI),
+                    radius * Math.cos(position_angle * obj.from_state + Math.PI) - radius * Math.cos(position_angle * obj.to_state + Math.PI),
+                ) : origin_point.angle + Math.PI / 3,
+            } : null;
+            return new DiagramTransition(
+                origin_point, terminal_point, from_scratch ? obj.read_symbol * 2 * Math.PI / this.machine.alphabet.length : this.diagram.transitions[idx].fallback_angle, 
+                idx, this.machine
+            );
+        })
+    }
+
+    static default() {
+        return new TMFile(
+            "New TM",
+            new TuringMachine(
+                // Reject empty string, accept any other string
+                [ "qI", "qA", "qR" ],  ['0', '1'], ['␣'],
+                [
+                    [ 0, 0, 2, 0, +1 ],
+                    [ 0, 1, 0, 2, +1 ],
+                    [ 0, 2, 1, 2, +1 ],
+                    [ 1, 0, null, null, null ],
+                    [ 1, 1, null, null, null ],
+                    [ 1, 2, null, null, null ],
+                    [ 2, 0, null, null, null ],
+                    [ 2, 1, null, null, null ],
+                    [ 2, 2, null, null, null ]
+                ].map(t => TuringMachine.transition_array_to_obj(t)),
+                0, 1, 2
+            ),
+            [ "␣", "0", "1" ],
+        )
     }
 
     add_computation(computation: string) { return this.computations.push(computation); }
@@ -77,7 +110,7 @@ export default class TMFile {
             });
 
             const origin_point: TransitionRenderPoint = {
-                state_position: { x: 0, y: 0 },
+                state_position: this.diagram.states[this.machine.states.length - 1].position,
                 radius: DiagramState.radius,
                 angle: symbol_idx * 2 * Math.PI / this.machine.alphabet.length
             };
@@ -93,19 +126,40 @@ export default class TMFile {
         this.machine.states.splice(index, 1);
         this.diagram.states.splice(index, 1);
 
+        // decrement the state index of every state after the removed state
+        if (this.machine.accept_state > index) { this.machine.accept_state -= 1; }
+        if (this.machine.reject_state > index) { this.machine.accept_state -= 1; }
+        if (this.machine.initial_state > index) { this.machine.accept_state -= 1; }
+
+        for (let i = index; i < this.machine.states.length; ++i) {
+             this.diagram.states[i].state_idx -= 1;
+             this.diagram.states[i].update_modifiers();
+        }
+
+        let left_shift_amount = 0;
         const removed_transitions: Array<number> = [];
-        for (let i = 0; i < this.machine.transitions.length; ++i) {
-            if (this.machine.transitions[i].from_state == index)
+        for (let [i, transition] of this.machine.transitions.entries()) { 
+            if (transition.from_state == index) {
                 removed_transitions.push(i);
+                left_shift_amount += 1;
+                continue;
+            } else {
+                this.diagram.transitions[i].update_index(i - left_shift_amount);
+            }
+
+            if (transition.from_state > index) { this.machine.transitions[i].from_state -= 1; }
+            if (transition.to_state != null && transition.to_state > index) { transition.to_state -= 1; }
+                
             if (this.machine.transitions[i].to_state == index) {
                 this.machine.transitions[i].to_state = null;
                 this.machine.transitions[i].write_symbol = null;
                 this.machine.transitions[i].direction = null;
+                this.diagram.transitions[i].terminal_point = null;
             }
         }
 
-        this.machine.transitions = this.machine.transitions.filter((_, idx) => removed_transitions.indexOf(idx) == -1 ); // remove transitions not in array
-        this.diagram.transitions = this.diagram.transitions.filter((_, idx) => removed_transitions.indexOf(idx) == -1 ); // remove transitions not in array
+        this.machine.transitions = this.machine.transitions.filter((val, idx) => removed_transitions.indexOf(idx) == -1);
+        this.diagram.transitions = this.diagram.transitions.filter((val, idx) => removed_transitions.indexOf(idx) == -1);
     }
 
     add_lang_symbol(symbol: string) {
@@ -132,23 +186,34 @@ export default class TMFile {
     }
     edit_lang_symbol(index:number, symbol: string) { this.machine.lang_alphabet[index] = symbol; this.machine.alphabet = [...this.machine.tape_alphabet, ...this.machine.lang_alphabet]; }
     remove_lang_symbol(index: number) {
-        this.machine.lang_alphabet.splice(index, 1);
-        this.machine.alphabet = [...this.machine.tape_alphabet, ...this.machine.lang_alphabet];
 
         const removed_transitions: Array<number> = [];
-        for (let i = 0; i < this.machine.transitions.length; ++i) {
-            if (this.machine.transitions[i].read_symbol == index + this.machine.tape_alphabet.length)
+        let left_shift_amount = 0;
+        for (let [i, transition] of this.machine.transitions.entries()) { 
+            if (this.machine.transitions[i].read_symbol == index + this.machine.tape_alphabet.length) {
                 removed_transitions.push(i);
+                left_shift_amount += 1;
+                continue;
+            } else {
+                this.diagram.transitions[i].update_index(i - left_shift_amount);
+            }
+
             if (this.machine.transitions[i].write_symbol == index + this.machine.tape_alphabet.length) {
                 this.machine.transitions[i].to_state = null;
                 this.machine.transitions[i].write_symbol = null;
                 this.machine.transitions[i].direction = null;
                 this.diagram.transitions[i].terminal_point = null;
             }
-        }
 
-        this.machine.transitions = this.machine.transitions.filter((_, idx) => removed_transitions.indexOf(idx) == -1 ); // remove transitions not in array
-        this.diagram.transitions = this.diagram.transitions.filter((_, idx) => removed_transitions.indexOf(idx) == -1 ); // remove transitions not in array
+            if (transition.read_symbol > index + this.machine.tape_alphabet.length)
+                transition.read_symbol -= 1;
+            if (transition.write_symbol != null && transition.write_symbol > index + this.machine.tape_alphabet.length)
+                transition.write_symbol -= 1;
+        }
+        this.machine.transitions = this.machine.transitions.filter((val, idx) => removed_transitions.indexOf(idx) == -1);
+        this.diagram.transitions = this.diagram.transitions.filter((val, idx) => removed_transitions.indexOf(idx) == -1);
+        this.machine.lang_alphabet.splice(index, 1);
+        this.machine.alphabet = [...this.machine.tape_alphabet, ...this.machine.lang_alphabet];
     }
 
     add_tape_symbol(symbol: string) {
@@ -186,27 +251,33 @@ export default class TMFile {
     }
     edit_tape_symbol(index:number, symbol: string) { this.machine.tape_alphabet[index] = symbol; this.machine.alphabet = [...this.machine.tape_alphabet, ...this.machine.lang_alphabet]; }
     remove_tape_symbol(index: number) {
-        this.machine.tape_alphabet.splice(index, 1);
-        this.machine.alphabet = [...this.machine.tape_alphabet, ...this.machine.lang_alphabet];
-
         const removed_transitions: Array<number> = [];
-        for (let [i, transition] of this.machine.transitions.entries()) {
-            if (this.machine.transitions[i].read_symbol == index)
+        let left_shift_amount = 0;
+        for (let [i, transition] of this.machine.transitions.entries()) { 
+            if (this.machine.transitions[i].read_symbol == index) {
                 removed_transitions.push(i);
-            if (transition.read_symbol >= this.machine.tape_alphabet.length)
-                transition.read_symbol -= 1;
-            if (transition.write_symbol != null && transition.write_symbol >= this.machine.tape_alphabet.length)
-                transition.write_symbol -= 1;
+                left_shift_amount += 1;
+                continue;
+            } else {
+                this.diagram.transitions[i].update_index(i - left_shift_amount);
+            }
+
             if (this.machine.transitions[i].write_symbol == index) {
                 this.machine.transitions[i].to_state = null;
                 this.machine.transitions[i].write_symbol = null;
                 this.machine.transitions[i].direction = null;
                 this.diagram.transitions[i].terminal_point = null;
             }
+            if (transition.read_symbol >= this.machine.tape_alphabet.length)
+                transition.read_symbol -= 1;
+            if (transition.write_symbol != null && transition.write_symbol >= this.machine.tape_alphabet.length)
+                transition.write_symbol -= 1;
         }
 
-        this.machine.transitions = this.machine.transitions.filter((_, idx) => removed_transitions.indexOf(idx) == -1 ); // remove transitions not in array
-        this.diagram.transitions = this.diagram.transitions.filter((_, idx) => removed_transitions.indexOf(idx) == -1 ); // remove transitions not in array
+        this.machine.transitions = this.machine.transitions.filter((val, idx) => removed_transitions.indexOf(idx) == -1);
+        this.diagram.transitions = this.diagram.transitions.filter((val, idx) => removed_transitions.indexOf(idx) == -1);
+        this.machine.tape_alphabet.splice(index, 1);
+        this.machine.alphabet = [...this.machine.tape_alphabet, ...this.machine.lang_alphabet];
     }
 
     update_diagram_state(state_idx: number, position: { x: number, y: number }) {
