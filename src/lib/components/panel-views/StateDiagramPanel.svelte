@@ -5,9 +5,6 @@
     import { getContext, onMount, untrack } from "svelte";
     import Camera from "$lib/canvas/camera";
 
-	import StateObject from "$lib/canvas/StateCanvasObjects";
-    import TransitionObject, { type TransitionRenderPoint } from "$lib/canvas/TransitionCanvasObject";
-
     let current_tm: TMFile = getContext("current_turing_machine")
 
     let canvas_parent: HTMLDivElement;
