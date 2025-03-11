@@ -277,16 +277,18 @@ export class DiagramTransition {
 
     toJSON(key: string) {
         return {
-            origin: this.origin_point,
-            terminal: this.terminal_point,
             fallback_angle: this.fallback_angle
         }
     }
 
-    static fromJSON(machine: TuringMachine, obj: any, transition_idx: number) {
-        return new DiagramTransition(
-            obj.origin, obj.terminal, obj.fallback_angle,
+    static fromJSON(machine: TuringMachine, diagram_states: Array<DiagramState>, obj: any, transition_idx: number) {
+        const t = new DiagramTransition(
+             { state_position: diagram_states[machine.transitions[transition_idx].from_state].position, radius: DiagramState.radius, angle: 0 },
+            machine.transitions[transition_idx].to_state != null ? { state_position: diagram_states[machine.transitions[transition_idx].to_state].position, radius: DiagramState.radius + 5, angle: 0 } : null,
+            obj.fallback_angle,
             transition_idx, machine
         );
+        t.refresh_angles();
+        return t;
     }
 }

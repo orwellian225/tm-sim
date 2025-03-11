@@ -320,9 +320,10 @@ export default class TMFile {
         this.identifier = obj.identifier;
         this.machine = TuringMachine.fromJSON(obj.machine);
         this.computations = obj.computations;
+        const diagram_states = obj.diagram.states.map((val, idx) => DiagramState.fromJSON(this.machine, val, idx));
         this.diagram = {
-            states: obj.diagram.states.map((obj, idx) => DiagramState.fromJSON(this.machine, obj, idx)),
-            transitions: obj.diagram.transitions.map((obj, idx) => DiagramTransition.fromJSON(this.machine, obj, idx))
+            states: diagram_states,
+            transitions: obj.diagram.transitions.map((obj, idx) => DiagramTransition.fromJSON(this.machine, diagram_states, obj, idx))
         };
     }
 
@@ -353,16 +354,24 @@ export default class TMFile {
             identifier: this.identifier,
             machine: this.machine.toJSON(key),
             computations: this.computations,
-            diagram: this.diagram
+            diagram: {
+                states: this.diagram.states.map((val) => val.toJSON(key)),
+                transitions: this.diagram.transitions.map((val) => val.toJSON(key))
+            }
         };
     }
 
     static fromJSON(obj: any) {
+        const machine = TuringMachine.fromJSON(obj.machine);
+        const diagram_states = obj.diagram.states.map((val, idx) => DiagramState.fromJSON(machine, val, idx));
         return new TMFile(
             obj.identifier,
-            TuringMachine.fromJSON(obj.machine),
+            machine, 
             obj.computations,
-            obj.diagram
+            {
+                states: diagram_states,
+                transitions: obj.diagram.transitions.map((val, idx) => DiagramTransition.fromJSON(machine, diagram_states, val, idx))
+            }
         );
     }
 }
