@@ -22,12 +22,14 @@
 	}
 </script>
 
-<h1 class="text-3xl">Example Turing Machines</h1>
+<article class="space-y-4">
+    <h1 class="text-3xl">Example Turing Machines</h1>
 
-<ol>
-	{#each all_examples as example}
-		<li class="flex flex-row justify-centers items-start pl-1">
-			<button class="w-fit hover:underline underline-offset-1" onclick={() => load_example(example)}>{example.identifier}</button>
-		</li>
-	{/each}
-</ol>
+	<ol class="list-inside list-disc">
+		{#each all_examples as example}
+			<li class="flex flex-row justify-centers items-start pl-1">
+				<button class="w-fit hover:underline underline-offset-1" onclick={() => load_example(example)}>{example.identifier}</button>
+			</li>
+		{/each}
+	</ol>
+</article>
