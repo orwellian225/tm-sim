@@ -46,7 +46,7 @@
 {/snippet}
 
 {#if split}
-	<SplitPlane type={split_type}  min="10%" max="90%" --color="black" --thickness="2px">
+	<SplitPlane type={split_type}  min="10%" max="90%" --color="black" --thickness="10px">
 		{#snippet a()}
 			{@render panel_control()}
 		{/snippet}
