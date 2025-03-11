@@ -3,7 +3,7 @@
     import Camera from "$lib/canvas/camera";
     let { in_str, machine, show_resources = false, remove_callback } = $props();
 
-    import { ArrowCounterClockwise, Play, SkipForward, TrashSimple, MagnifyingGlassMinus, MagnifyingGlassPlus } from "phosphor-svelte";
+    import { ArrowCounterClockwise, Play, SkipForward, TrashSimple, MagnifyingGlassMinus, MagnifyingGlassPlus, Gear } from "phosphor-svelte";
 	import { onMount } from "svelte";
 
     let computation: TMComputation = $derived(new TMComputation(machine, in_str));
@@ -23,6 +23,11 @@
 
     const origin_width_ratio = 0.38;
     const origin_zoom_ratio = 0.8;
+
+    let show_settings = $state(false);
+    let settings = $state({
+        max_timesteps: 10
+    });
 
     let canvas: HTMLCanvasElement;
     let canvas_parent: HTMLElement;
@@ -153,30 +158,36 @@
         <span class="flex flex-row items-center gap-2">
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => computation.reset()}><ArrowCounterClockwise size={20} /></button>
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => computation.step()}><SkipForward size={20} /></button>
-            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => computation.step_until_halt()}><Play size={20} /></button>
+            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => computation.step_for(settings.max_timesteps)}><Play size={20} /></button>
             <p class="flex items-center justify-center">Status: {status_to_string(computation.status, computation.state)}</p>
         </span>
 
         <span class="flex flex-row items-center gap-2">
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => decrease_zoom()}><MagnifyingGlassMinus size={20} /></button>
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => increase_zoom()}><MagnifyingGlassPlus size={20} /></button>
+            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => show_settings = !show_settings}><Gear size={20} /></button>
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => remove_callback()}><TrashSimple size={20} /></button>
         </span>
     </section>
 
     {#if show_resources}
-        <table class="w-fit">
-            <tbody>
-                <tr>
-                    <td>Time:</td>
-                    <td>{computation.resources.time}</td>
-                </tr>
-                <tr>
-                    <td>Space:</td>
-                    <td>{computation.resources.space}</td>
-                </tr>
-            </tbody>
-        </table>
+        <ul class="w-fit px-2">
+            <li>Time: {computation.resources.time}</li>
+            <li>Space: {computation.resources.space}</li>
+        </ul>
+    {/if}
+
+    {#if show_settings}
+        <ul class="w-fit px-2">
+            <li>Max timesteps: <input class="border-black border-[1px] px-1" type="number" bind:value={settings.max_timesteps}></li>
+        </ul>
+    {/if}
+
+    {#if computation.info.code != 0}
+        <ul class="w-fit px-2">
+            <li>Code: {computation.info.code}</li>
+            <li>Message: {computation.info.message}</li>
+        </ul>
     {/if}
 
      <section bind:this={canvas_parent} class="h-12">
