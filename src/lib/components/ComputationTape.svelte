@@ -26,7 +26,7 @@
 
     let show_settings = $state(false);
     let settings = $state({
-        max_timesteps: 10
+        max_timesteps: 1000
     });
 
     let canvas: HTMLCanvasElement;
