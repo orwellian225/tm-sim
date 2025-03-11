@@ -10,11 +10,18 @@ export default class TMComputation {
     head: number;
     state: number = $state(0);
 
-    status: number = $state(0); // 0: running, 1: accepted, 2: rejected
+    status: number = $state(0); // 0: running, 1: accepted, 2: rejected, 3: timeout_terminated
     resources: {
         time: number,
         space: number
     } = $state({ time: 0, space: 0 });
+    info: {
+        // Info Codes
+        // 0: None - no information
+        // 1: Error - something has gone wrong
+        code: number, 
+        message: string,
+    } = $state({ code: 0, message: "" })
     
 
     constructor(machine: TuringMachine, input_str: string) {
@@ -27,6 +34,7 @@ export default class TMComputation {
         this.head = 0;
 		this.state = this.machine.initial_state;
 		this.status = 0;
+        this.info = { code: 0, message: "" };
 
 		this.tape = [];
 		let potential_symbol: string = ""
@@ -82,6 +90,19 @@ export default class TMComputation {
             this.status = 2;
     }
 
+    step_for(num_steps: number) {
+        for (let i = 0; i < num_steps; ++i) {
+            if (this.status != 0) return;
+
+            this.step();
+        }
+        this.info.code = 1;
+        this.info.message = `Timeout - Exceeded step limit of ${num_steps}`;
+    }
+
+    // WARNING: Inifinitely running Turing Machines will cause the tab to hang
+    // DO NOT USE
+    // Rather use step_for with a large number of steps
     step_until_halt() {
         while (this.status == 0)
             this.step();

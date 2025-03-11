@@ -2,7 +2,7 @@
     import { getContext } from "svelte";
 
     import { Plus, PencilSimple, TrashSimple, EyeClosed, Eye, Check, X } from "phosphor-svelte";
-    import { Separator } from "bits-ui";
+    import { Separator, Tooltip } from "bits-ui";
 
 	import type TMFile from "$lib/tm-engine/tm-file.svelte";
 
@@ -39,16 +39,37 @@
             {#each current_turing_machine.machine.tape_alphabet as symbol, idx}
                 <li class="flex justify-between items-center">
                     {#if editing_symbol_idx != idx}
-                        <p>* {symbol}</p>
-                        <span class="flex justify-evenly items-center gap-[1px] pr-1">
-                            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                                editing_symbol_idx = idx;
-                                editing_symbol_value = symbol;
-                            }}><PencilSimple size={16}/></button>
-                            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                                current_turing_machine.remove_tape_symbol(idx);
-                            }}><TrashSimple size={16}/></button>
-                        </span>
+                        {#if idx != 0}
+                            <p>* {symbol}</p>
+                            <span class="flex justify-evenly items-center gap-[1px] pr-1">
+                                <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
+                                    editing_symbol_idx = idx;
+                                    editing_symbol_value = symbol;
+                                }}><PencilSimple size={16}/></button>
+                                <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
+                                    current_turing_machine.remove_tape_symbol(idx);
+                                }}><TrashSimple size={16}/></button>
+                            </span>
+                        {:else}
+                            <Tooltip.Provider>
+                            <Tooltip.Root>
+                                <Tooltip.Trigger class="w-full flex justify-between items-center">
+                                    <p>* {symbol}</p>
+                                    <span class="flex justify-evenly items-center gap-[1px] pr-1">
+                                        <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
+                                            editing_symbol_idx = idx;
+                                            editing_symbol_value = symbol;
+                                        }}><PencilSimple size={16}/></button>
+                                    </span>
+                                </Tooltip.Trigger>
+                                <Tooltip.Content>
+                                <div class="p-1 w-fit flex flex-col justify-start items-center bg-white border-black border-[1px]">
+                                    <p>Blank Symbol - cannot be removed</p>
+								</div>
+                                </Tooltip.Content>
+                            </Tooltip.Root>
+                            </Tooltip.Provider>
+                        {/if}
                     {:else}
                         <span>* <input class="border-[1px] border-black w-4/5" type="text" bind:value={editing_symbol_value} autofocus/></span>
                         <span class="flex justify-evenly items-center gap-[1px] pr-1">
