@@ -31,7 +31,7 @@
         canvas.width = canvas_parent.offsetWidth;
         canvas.height = canvas_parent.offsetHeight;
         camera.updateViewport();
-        camera.zoomTo(canvas.width * origin_zoom_ratio);
+        camera.zoomTo(canvas.width * origin_zoom_ratio + 100);
         camera.moveTo(canvas.width * origin_width_ratio , 0);
     });
     let camera: any;
@@ -97,7 +97,21 @@
     }
 
     function draw_tape_head(x: number, y: number) {
-        ctx.fillStyle = "blue";
+
+        switch (computation.status) {
+            case 0:
+                ctx.fillStyle = "#2b7fff";
+                break;
+            case 1:
+                ctx.fillStyle = "#00c850";
+                break;
+            case 2:
+                ctx.fillStyle = "#fb2c36";
+                break;
+            default:
+                ctx.fillStyle = "red";
+                break;
+        }
         ctx.fillRect(x, y, 30, 3);
     }
 
