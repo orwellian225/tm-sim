@@ -7,7 +7,7 @@
         <ol class="list-inside list-disc">
             <li>Computes Decision Problems - Accept / Reject</li>
             <li>Single Tape</li>
-            <li>One Way Tape - △ symbol is the end of tape marker</li>
+            <li>Two Way Tape</li>
         </ol>
     </section>
 </article>

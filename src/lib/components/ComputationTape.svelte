@@ -56,7 +56,7 @@
         canvas.addEventListener("mousemove", (event: MouseEvent) => {
             if (camera_dragging) {
                 camera.moveTo(
-                    camera.lookAt[0] - event.movementX > canvas.width * origin_width_ratio ? camera.lookAt[0] - event.movementX : canvas.width * origin_width_ratio,
+                    camera.lookAt[0] - event.movementX ,
                     camera.lookAt[1]
                 );
             }
@@ -135,10 +135,11 @@
                 draw_tape_head(0, 13);
 
             // draw a ghost tape i.e. unused cells
-            for (let i = 0; i < computation.tape.length + 20; ++i) {
+            for (let i = 0; i < computation.tape.length; ++i) {
                 draw_tape_cell(computation.tape.length * 30 + 30 * i, -15, -1);
+                draw_tape_cell(-30 * (i + 1), -15, -1);
             }
-            draw_tape_cell(-30, -15, -2) // end of tape marker
+            // draw_tape_cell(-30, -15, -2) // end of tape marker
 
         camera.end();
         requestAnimationFrame(draw);
