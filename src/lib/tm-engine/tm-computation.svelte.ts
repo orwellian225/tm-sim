@@ -56,14 +56,15 @@ export default class TMComputation {
     step() {
         if (this.status != 0) return;
 
-        let trans: TMTransition | null = null
+        let trans: TMTransition;
 		for (let i = 0; i < this.machine.transitions.length; ++i) {
 			trans = this.machine.transitions[i];
             if (trans.from_state == this.state && trans.read_symbol == this.tape[this.head])
                 break;
 		}
 
-        if (!trans) {
+        // @ts-ignore
+        if (trans == null || trans.direction == null || trans.write_symbol == null || trans.to_state == null) {
             this.status = -1;
             return;
         }
@@ -77,11 +78,12 @@ export default class TMComputation {
             this.resources.space = this.head + trans.direction;
 
         if (this.head >= this.tape.length)
-			this.tape = this.tape.concat(Array(this.tape.length * 2).fill(0))
+			this.tape = this.tape.concat(Array(this.tape.length).fill(0))
 
-        // One way tape
-        if (this.head < 0)
-            this.head = 0;
+        if (this.head < 0) {
+            this.head = this.tape.length + trans.direction;
+            this.tape = Array(this.tape.length).fill(0).concat(this.tape)
+        }
 
         if (trans.to_state == this.machine.accept_state)
             this.status = 1;
