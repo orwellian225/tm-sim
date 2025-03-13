@@ -75,7 +75,7 @@ export default class TMFile {
             "New TM",
             new TuringMachine(
                 // Reject empty string, accept any other string
-                [ "qI", "qA", "qR" ],  ['0', '1'], ['␣'],
+                [ "qI", "qA", "qR" ],  ['0', '1'], ['_'],
                 [
                     [ 0, 0, 2, 0, +1 ],
                     [ 0, 1, 0, 2, +1 ],
@@ -89,7 +89,7 @@ export default class TMFile {
                 ].map(t => TuringMachine.transition_array_to_obj(t)),
                 0, 1, 2
             ),
-            [ "␣", "0", "1" ],
+            [ "_", "0", "1" ],
         )
     }
 
