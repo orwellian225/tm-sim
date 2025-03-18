@@ -3,7 +3,7 @@
     import TMFile from '$lib/tm-engine/tm-file.svelte';
     import { getContext } from 'svelte';
     import { Separator } from 'bits-ui';
-    import { Copy, X } from 'phosphor-svelte';
+    import { Copy, X, DownloadSimple } from 'phosphor-svelte';
 
     let current_tm: TMFile = getContext("current_turing_machine");
 
@@ -98,7 +98,10 @@
 
 <dialog bind:this={dialog_element} class="border-[1px] border-black p-1">
     <div class="flex flex-col justify-start items-center gap-1 py-1">
-        <h3 class="text-xl">Transition Table Export</h3>
+        <span class="flex flex-row w-full items-center justify-between">
+            <h3 class="text-xl">Transition Table Export</h3>
+            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => dialog_element.close()}><X size={24} /></button>
+        </span>
 
         <Separator.Root class="bg-black my-2 data-[orientation=horizontal]:h-[2px] data-[orientation=horizontal]:w-full" />
 
@@ -152,8 +155,29 @@
 
         <Separator.Root class="bg-black my-2 data-[orientation=horizontal]:h-[2px] data-[orientation=horizontal]:w-full" />
 
-        <span class="flex flex-row items-center justify-between w-full">
-            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => dialog_element.close()}><X size={24} /></button>
+        <span class="flex flex-row items-center justify-start w-full gap-2">
+            <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
+                const element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(
+                    current_tm.export_transition_table({
+                        state_counter: state_counter,
+                        symbol_counter: symbol_counter,
+                        direction_symbol: direction_symbol,
+                        transition_seperator: transition_seperator,
+                        field_seperator: field_seperator,
+                        state_base: state_base,
+                        symbol_base: symbol_base,
+                        direction_base: direction_base
+                    })
+                ));
+                element.setAttribute('download', `${current_tm.identifier}_table.txt`);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+                document.body.removeChild(element);
+            }}><DownloadSimple size={24} /></button>
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
                 navigator.clipboard.writeText(current_tm.export_transition_table({
                     state_counter: state_counter,
