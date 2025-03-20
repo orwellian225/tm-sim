@@ -331,23 +331,23 @@ export default class TMFile {
         num_transitions = 0,
         transition_seperator = ";",
         field_seperator = "#", 
-        state_base = 10, // print as base n
-        symbol_base = 10, // print as base n
-        direction_base = 10,
+        base = 10, // print as base n
         state_counter = false , // print as state as index or as state name
         symbol_counter = false, // print as symbol as index or as symbol
-        direction_symbol = true // print direction as L, S, R or as -1, 0, 1
-    }) {
+        direction_enum = 0, 
+    }): string {
         if (num_transitions <= 0)
             num_transitions = this.machine.transitions.length;
 
         let table = this.machine.transitions.slice(0, num_transitions).filter((val) => val.to_state != null).map((transition) => {
             return [
-                state_counter ? transition.from_state.toString(state_base) : this.machine.states[transition.from_state],
-                symbol_counter ? transition.read_symbol.toString(symbol_base) : this.machine.alphabet[transition.read_symbol],
-                state_counter ? transition.to_state.toString(state_base) : this.machine.states[transition.to_state],
-                symbol_counter ? transition.write_symbol.toString(symbol_base) : this.machine.alphabet[transition.write_symbol],
-                direction_symbol ? ["L", "S", "R"][transition.direction + 1] : transition.direction.toString(direction_base)
+                state_counter ? transition.from_state.toString(base) : this.machine.states[transition.from_state],
+                symbol_counter ? transition.read_symbol.toString(base) : this.machine.alphabet[transition.read_symbol],
+                state_counter ? transition.to_state?.toString(base) : this.machine.states[transition.to_state],
+                symbol_counter ? transition.write_symbol?.toString(base) : this.machine.alphabet[transition.write_symbol],
+                direction_enum == 0 ? ["L", "S", "R"][transition.direction + 1] :
+                    direction_enum == 1 ? [0, null, 1][transition.direction + 1] :
+                    direction_enum == 2 ? transition.direction?.toString(base) : ["L", "S", "R"][transition.direction + 1]
             ].join(field_seperator);
         }).join(transition_seperator);
         table += transition_seperator;
