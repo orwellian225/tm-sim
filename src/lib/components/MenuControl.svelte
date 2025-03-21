@@ -81,8 +81,7 @@
       	subelements: elements
     }]
 
-    let export_transition_table_options = $state({
-        num_transitions: 3,
+    let table_options = $state({
         state_counter: false,
         symbol_counter: false,
         direction_enum: 0,
@@ -90,7 +89,8 @@
         field_seperator: "#",
         base: 10
     });
-    let exported_transition_table = $derived(current_tm.export_transition_table(export_transition_table_options));
+    let preview_table = $derived(current_tm.export_transition_table({num_transitions: 3, ...table_options}));
+    let complete_table = $derived(current_tm.export_transition_table(table_options));
 </script>
 
 
@@ -111,20 +111,20 @@
             <span class="flex flex-row items-center justify-between w-full px-2 gap-5">
                 <label for="state_counter">States as Counter</label>
                 <span class="flex flex-row items-center justify-end gap-2">
-                    <input name="state_counter" type="checkbox" bind:checked={export_transition_table_options.state_counter}>
+                    <input name="state_counter" type="checkbox" bind:checked={table_options.state_counter}>
                 </span>
             </span>
             <span class="flex flex-row items-center justify-between w-full px-2 gap-5">
                 <label for="symbol_counter">Symbols as Counter</label>
                 <span class="flex flex-row items-center justify-end gap-2">
-                    <input name="symbol_counter" type="checkbox" bind:checked={export_transition_table_options.symbol_counter}>
+                    <input name="symbol_counter" type="checkbox" bind:checked={table_options.symbol_counter}>
                 </span>
             </span>
             <span class="flex flex-row items-center justify-between w-full px-2 gap-5">
                 <label for="direction_string">Direction</label>
                 <span class="flex flex-row items-center justify-end gap-2">
                     <!-- <input name="direction_string" type="checkbox" bind:checked={direction_symbol}> -->
-                     <select class="w-fit p-1" bind:value={export_transition_table_options.direction_enum}>
+                     <select class="w-fit p-1" bind:value={table_options.direction_enum}>
                         <option value={0}>Direction as Symbol</option>
                         <option value={1}>Direction as Natural (L = 0, R = 1)</option>
                         <option value={2}>Direction as Integer (L = -1, R = +1)</option>
@@ -133,22 +133,22 @@
             </span>
             <span class="flex flex-row items-center justify-between w-full px-2 gap-5">
                 <label for="counter_base">Number Base</label>
-                <input class="border-[1px] border-black w-1/4" name="counter_base" type="number" bind:value={export_transition_table_options.base}>
+                <input class="border-[1px] border-black w-1/4" name="counter_base" type="number" bind:value={table_options.base}>
             </span>
             <span class="flex flex-row items-center justify-between w-full px-2 gap-5">
                 <label for="field_seperator">Field Seperator</label>
-                <input class="border-[1px] border-black w-1/4" name="field_seperator" type="text" bind:value={export_transition_table_options.field_seperator}>
+                <input class="border-[1px] border-black w-1/4" name="field_seperator" type="text" bind:value={table_options.field_seperator}>
             </span>
             <span class="flex flex-row items-center justify-between w-full px-2 gap-5">
                 <label for="trans_seperator">Transition Seperator</label>
-                <input class="border-[1px] border-black w-1/4" name="trans_seperator" type="text" bind:value={export_transition_table_options.transition_seperator}>
+                <input class="border-[1px] border-black w-1/4" name="trans_seperator" type="text" bind:value={table_options.transition_seperator}>
             </span>
         </form>
 
         <Separator.Root class="bg-black my-2 data-[orientation=horizontal]:h-[2px] data-[orientation=horizontal]:w-full" />
 
         <span class="flex flex-row items-center justify-center w-full px-2">
-            <p>{exported_transition_table}</p>
+            <p>{preview_table}</p>
         </span>
 
         <Separator.Root class="bg-black my-2 data-[orientation=horizontal]:h-[2px] data-[orientation=horizontal]:w-full" />
@@ -156,7 +156,7 @@
         <span class="flex flex-row items-center justify-start w-full gap-2">
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
                 const element = document.createElement('a');
-                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(exported_transition_table));
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(complete_table));
                 element.setAttribute('download', `${current_tm.identifier}_table.txt`);
 
                 element.style.display = 'none';
@@ -166,7 +166,7 @@
                 document.body.removeChild(element);
             }}><DownloadSimple size={24} /></button>
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                navigator.clipboard.writeText(exported_transition_table)
+                navigator.clipboard.writeText(complete_table)
                     .then(() => console.log("Copied transition table to clipboard"))
                     .catch(err => console.error("Failed to copy transition table to clipboard", err));
             }}><Copy size={24} /></button>
