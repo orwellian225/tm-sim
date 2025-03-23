@@ -1,22 +1,22 @@
-type Transition = {
-    to_state: State,
+type MachineTransition = {
+    to_state: MachineState,
     write_symbol: string,    
     direction: number
 }
 
-type State = {
+export type MachineState = {
     name: string,
-    transitions: Array<Transition | null>
+    transitions: Array<MachineTransition | null>
 }
 
 export default class TuringMachine2 {
-    states: Array<State> = $state([]);
-    lang_alphabet: Array<string> = $state(["0", "1"]);
-    tape_alphabet: Array<string> = $state(["_"]);
-    alphabet: Array<string> = $state(["_", "0", "1"]);
-    initial_state: number = $state(0);
-    accept_state: number = $state(1);
-    reject_state: number = $state(2);
+    states: Array<MachineState>;
+    lang_alphabet: Array<string>;
+    tape_alphabet: Array<string>;
+    alphabet: Array<string>;
+    initial_state: number;
+    accept_state: number;
+    reject_state: number;
 
 
     // A critical assumption here: A new Turing Machine is created with the states and symbols correctly synced with transitions
@@ -26,6 +26,8 @@ export default class TuringMachine2 {
         transitions: Array<{ from_state_idx: number, read_symbol_idx: number, transition : { to_state_idx: number, write_symbol_idx: number, integer_direction: number } | null  }>,
         initial_state: number, accept_state: number, reject_state: number 
     ) {
+        this.states = [];
+        this.alphabet = [];
         this.lang_alphabet = lang_alphabet;
         this.tape_alphabet = tape_alphabet;
         this.initial_state = initial_state;
@@ -112,7 +114,7 @@ export default class TuringMachine2 {
 
     toJSON() {
         return {
-            states: this.states.map((state: State) => state.name),
+            states: this.states.map((state: MachineState) => state.name),
             lang_alphabet: this.lang_alphabet,
             tape_alphabet: this.tape_alphabet,
             transitions: this.states.map((state, state_i) =>
