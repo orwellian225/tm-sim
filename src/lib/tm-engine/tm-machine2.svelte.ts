@@ -95,7 +95,11 @@ export default class TuringMachine2 {
     }
     edit_lang_symbol(index: number, new_symbol: string) { this.lang_alphabet[index] = new_symbol; }
     remove_lang_symbol(index: number) {
-        this.states.forEach(state => state.transitions = state.transitions.filter((t, idx) => this.alphabet[index] != t?.write_symbol));
+        this.states.forEach(state => {
+            console.log(state.transitions)
+            state.transitions = state.transitions.map((t, idx) => this.alphabet[index + this.tape_alphabet.length] != t?.write_symbol ? t : null)
+            state.transitions.splice(index + this.tape_alphabet.length, 1); 
+        });
         this.lang_alphabet.splice(index, 1);
         this.refresh_alphabet();
     }
@@ -103,11 +107,14 @@ export default class TuringMachine2 {
     add_tape_symbol(symbol: string) { 
         this.tape_alphabet.push(symbol); 
         this.refresh_alphabet();
-        this.states.forEach(state => state.transitions.push(null));
+        this.states.forEach(state => state.transitions.splice(this.alphabet.indexOf(symbol), 0, null));
     }
     edit_tape_symbol(index: number, new_symbol: string) { this.tape_alphabet[index] = new_symbol; }
     remove_tape_symbol(index: number) {
-        this.states.forEach(state => state.transitions = state.transitions.filter((t, idx) => this.alphabet[index] != t?.write_symbol));
+        this.states.forEach(state => {
+            state.transitions = state.transitions.map((t, idx) => this.alphabet[index] != t?.write_symbol ? t : null)
+            state.transitions.splice(index, 1); 
+        });
         this.tape_alphabet.splice(index, 1);
         this.refresh_alphabet();
     }
