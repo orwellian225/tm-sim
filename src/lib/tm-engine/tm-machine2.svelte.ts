@@ -11,8 +11,8 @@ export type MachineState = {
 
 export default class TuringMachine2 {
     states: Array<MachineState> = $state([]);
-    lang_alphabet: Array<string>;
-    tape_alphabet: Array<string>;
+    lang_alphabet: Array<string> = $state([]);
+    tape_alphabet: Array<string> = $state([]);
     alphabet: Array<string> = $state([]);
     initial_state: number = $state(0);
     accept_state: number = $state(0);
@@ -84,8 +84,8 @@ export default class TuringMachine2 {
     }
     edit_state(index: number, new_name: string) { this.states[index].name = new_name; }
     remove_state(index: number) {
-        this.states.splice(index, 1);
         this.states.forEach((state) => state.transitions = state.transitions.filter((t, idx) => this.states[index] != t?.to_state));
+        this.states.splice(index, 1);
     }
 
     add_lang_symbol(symbol: string) { 
@@ -95,9 +95,9 @@ export default class TuringMachine2 {
     }
     edit_lang_symbol(index: number, new_symbol: string) { this.lang_alphabet[index] = new_symbol; }
     remove_lang_symbol(index: number) {
+        this.states.forEach(state => state.transitions = state.transitions.filter((t, idx) => this.alphabet[index] != t?.write_symbol));
         this.lang_alphabet.splice(index, 1);
         this.refresh_alphabet();
-        this.states.forEach(state => state.transitions = state.transitions.filter((t, idx) => this.alphabet[index] != t?.write_symbol));
     }
 
     add_tape_symbol(symbol: string) { 
@@ -107,9 +107,9 @@ export default class TuringMachine2 {
     }
     edit_tape_symbol(index: number, new_symbol: string) { this.tape_alphabet[index] = new_symbol; }
     remove_tape_symbol(index: number) {
+        this.states.forEach(state => state.transitions = state.transitions.filter((t, idx) => this.alphabet[index] != t?.write_symbol));
         this.tape_alphabet.splice(index, 1);
         this.refresh_alphabet();
-        this.states.forEach(state => state.transitions = state.transitions.filter((t, idx) => this.alphabet[index] != t?.write_symbol));
     }
 
     toJSON() {

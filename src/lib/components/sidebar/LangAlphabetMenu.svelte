@@ -4,9 +4,9 @@
     import { Plus, PencilSimple, TrashSimple, EyeClosed, Eye, Check, X } from "phosphor-svelte";
     import { Separator } from "bits-ui";
 
-    import TMFile from "$lib/tm-engine/tm-file.svelte";
+    import TMFile2 from "$lib/tm-engine/tm-file2.svelte";
 
-    let current_turing_machine: TMFile = getContext("current_turing_machine");
+    let current_tm: TMFile2 = getContext("current_turing_machine");
 
     let show_alphabet = $state(true);
 
@@ -20,7 +20,7 @@
 
         <span class="flex justify-evenly items-center gap-[1px]">
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                current_turing_machine.add_lang_symbol("l");
+                current_tm.add_lang_symbol("l");
             }}><Plus size={20}/></button>
             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => show_alphabet = !show_alphabet}>
                 {#if show_alphabet}
@@ -36,7 +36,7 @@
 
     {#if show_alphabet}
         <ul class="space-y-[1px] max-h-[200px] overflow-y-auto">
-            {#each current_turing_machine.machine.lang_alphabet as symbol, idx}
+            {#each current_tm.machine.lang_alphabet as symbol, idx}
                 <li class="flex justify-between items-center">
                     {#if editing_symbol_idx != idx}
                         <p>* {symbol}</p>
@@ -46,14 +46,14 @@
                                 editing_symbol_value = symbol;
                             }}><PencilSimple size={16}/></button>
                             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                                current_turing_machine.remove_lang_symbol(idx);
+                                current_tm.remove_lang_symbol(idx);
                             }}><TrashSimple size={16}/></button>
                         </span>
                     {:else}
                         <span>* <input class="border-[1px] border-black w-4/5" type="text" bind:value={editing_symbol_value} autofocus/></span>
                         <span class="flex justify-evenly items-center gap-[1px] pr-1">
                             <button class="border-[1px] p-1 border-black hover:bg-zinc-100" onclick={() => {
-                                current_turing_machine.edit_lang_symbol(idx, editing_symbol_value);
+                                current_tm.edit_lang_symbol(idx, editing_symbol_value);
                                 editing_symbol_value = "";
                                 editing_symbol_idx = -1;
                             }}><Check size={16}/></button>
