@@ -4,23 +4,23 @@
 	import { getContext } from 'svelte';
 
 	import { TrashSimple } from 'phosphor-svelte';
-	import DiagramState from '$lib/tm-engine/tm-diagram';
 
 	let current_tm: TMFile2 = getContext('current_turing_machine');
 </script>
 
 <ul class="space-y-2 p-1">
 	{#each current_tm.machine.states as state, state_idx}
-		{#each state.transitions as transition, s_idx}
+		{#each current_tm.machine.alphabet as symbol, symbol_idx}
 			{#if state_idx != current_tm.machine.accept_state && state_idx != current_tm.machine.reject_state}
+				{@const transition = state.transitions[symbol_idx]}
 				<li class="w-fit flex flex-row items-center justify-center gap-2 h-8">
-					{state.name}, {current_tm.machine.alphabet[s_idx]} ->
+					{state.name}, {symbol} ->
 					{#if transition !== null}
 						<!-- {transition.to_state.name}, {transition.write_symbol}, {transition.direction} -->
 						<select value={current_tm.machine.states.indexOf(transition.to_state)} class="p-1 bg-white" onchange={(event: Event) => {
 							current_tm.edit_transition(
 								state,
-								s_idx,
+								symbol_idx,
 								{ to_state: current_tm.machine.states[event.target?.value], write_symbol: transition.write_symbol, direction: transition.direction } as MachineTransition
 							);
 						}}>
@@ -31,7 +31,7 @@
 						<select value={transition.write_symbol} class="p-1 bg-white" onchange={(event: Event) => {
 							current_tm.edit_transition(
 								state,
-								s_idx,
+								symbol_idx,
 								{ to_state: transition.to_state, write_symbol: event.target?.value, direction: transition.direction } as MachineTransition
 							);
 						}}>
@@ -42,7 +42,7 @@
 						<select value={transition.direction + 1} class="p-1 bg-white" onchange={(event: Event) => {
 							current_tm.edit_transition(
 								state,
-								s_idx,
+								symbol_idx,
 								// negative numbers break selects for some reason. So just offset up and then down
 								// not a fix for more expressive TM but that can be fixed by making this a number input
 								{ to_state: transition.to_state, write_symbol: transition.write_symbol, direction: event.target?.value - 1} as MachineTransition
@@ -54,14 +54,14 @@
 						<button
 							class="border-[1px] p-1 border-black hover:bg-zinc-100"
 							onclick={() => {
-								current_tm.edit_transition(state, s_idx, null);
+								current_tm.edit_transition(state, symbol_idx, null);
 							}}><TrashSimple size={18} /></button
 						>
 					{:else}
 						<button
 							class="border-[1px] p-1 border-black hover:bg-zinc-100"
 							onclick={() => {
-								current_tm.edit_transition(state, s_idx, { to_state: state, write_symbol: current_tm.machine.alphabet[s_idx], direction: 1 } as MachineTransition);
+								current_tm.edit_transition(state, symbol_idx, { to_state: state, write_symbol: current_tm.machine.alphabet[symbol_idx], direction: 1 } as MachineTransition);
 							}}>No Transition</button
 						>
 					{/if}

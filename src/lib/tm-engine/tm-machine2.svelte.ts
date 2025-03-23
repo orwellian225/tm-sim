@@ -18,7 +18,6 @@ export default class TuringMachine2 {
     accept_state: number = $state(0);
     reject_state: number = $state(0);
 
-
     // A critical assumption here: A new Turing Machine is created with the states and symbols correctly synced with transitions
     constructor(
         states: Array<string>, 
@@ -93,7 +92,7 @@ export default class TuringMachine2 {
         this.refresh_alphabet();
         this.states.forEach(state => state.transitions.push(null));
     }
-    edit_lang_symbol(index: number, new_symbol: string) { this.lang_alphabet[index] = new_symbol; }
+    edit_lang_symbol(index: number, new_symbol: string) { this.lang_alphabet[index] = new_symbol; this.refresh_alphabet(); }
     remove_lang_symbol(index: number) {
         this.states.forEach(state => {
             console.log(state.transitions)
@@ -109,7 +108,7 @@ export default class TuringMachine2 {
         this.refresh_alphabet();
         this.states.forEach(state => state.transitions.splice(this.alphabet.indexOf(symbol), 0, null));
     }
-    edit_tape_symbol(index: number, new_symbol: string) { this.tape_alphabet[index] = new_symbol; }
+    edit_tape_symbol(index: number, new_symbol: string) { this.tape_alphabet[index] = new_symbol; this.refresh_alphabet(); }
     remove_tape_symbol(index: number) {
         this.states.forEach(state => {
             state.transitions = state.transitions.map((t, idx) => this.alphabet[index] != t?.write_symbol ? t : null)
