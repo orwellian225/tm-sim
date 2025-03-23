@@ -1,7 +1,7 @@
 <script lang="ts">
     import RecursiveTextMenu from '../RecursiveTextMenu.svelte';
     import TMFile from '$lib/tm-engine/tm-file.svelte';
-    import TuringMachine2 from '$lib/tm-engine/tm-machine2';
+    import TuringMachine2 from '$lib/tm-engine/tm-machine2.svelte';
     import { getContext } from 'svelte';
     import { Separator } from 'bits-ui';
     import { Copy, X, DownloadSimple } from 'phosphor-svelte';
@@ -90,10 +90,8 @@
         field_seperator: "#",
         base: 10
     });
-    let preview_table = $derived(current_tm.export_transition_table({num_transitions: 3, ...table_options}));
-    let complete_table = $derived(current_tm.export_transition_table(table_options));
-
-    let new_tm_version = TuringMachine2.default();
+    let preview_table = ""// $derived(current_tm.export_transition_table({num_transitions: 3, ...table_options}));
+    let complete_table = ""//$derived(current_tm.export_transition_table(table_options));
 </script>
 
 

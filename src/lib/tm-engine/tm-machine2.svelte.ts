@@ -1,6 +1,6 @@
-type MachineTransition = {
+export type MachineTransition = {
     to_state: MachineState,
-    write_symbol: string,    
+    write_symbol: string,
     direction: number
 }
 
@@ -10,13 +10,13 @@ export type MachineState = {
 }
 
 export default class TuringMachine2 {
-    states: Array<MachineState>;
+    states: Array<MachineState> = $state([]);
     lang_alphabet: Array<string>;
     tape_alphabet: Array<string>;
-    alphabet: Array<string>;
-    initial_state: number;
-    accept_state: number;
-    reject_state: number;
+    alphabet: Array<string> = $state([]);
+    initial_state: number = $state(0);
+    accept_state: number = $state(0);
+    reject_state: number = $state(0);
 
 
     // A critical assumption here: A new Turing Machine is created with the states and symbols correctly synced with transitions

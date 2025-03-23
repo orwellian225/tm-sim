@@ -4,9 +4,9 @@
 	import { PencilSimple, Check } from "phosphor-svelte";
 	import { Separator } from "bits-ui";
 
-	import type TMFile from "$lib/tm-engine/tm-file.svelte";
+	import type TMFile2 from "$lib/tm-engine/tm-file2.svelte";
 
-    let current_turing_machine: TMFile = getContext("current_turing_machine");
+    let current_turing_machine: TMFile2 = getContext("current_turing_machine");
 
     let edit_identifier = $state(false);
     let edit_identifier_value = $state("");
@@ -14,7 +14,7 @@
 
 <div>
 	<div class="w-full flex justify-between items-center">
-		<input class="w-full  text-2xl" type="text" bind:value={current_turing_machine.identifier}>
+		<input class="w-full  text-2xl" type="text" bind:value={current_turing_machine.info.identifier}>
 
 		<!-- {#if !edit_identifier}
 		    <h2 class="text-2xl">{current_turing_machine.identifier}</h2>

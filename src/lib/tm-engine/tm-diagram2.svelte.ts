@@ -1,4 +1,4 @@
-import TuringMachine2, { type MachineState } from "./tm-machine2";
+import TuringMachine2, { type MachineState } from "./tm-machine2.svelte";
 
 type DiagramTransition = {
     fallback_angle: number,

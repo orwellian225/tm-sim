@@ -1,5 +1,5 @@
-import TuringMachine2 from './tm-machine2';
-import TuringDiagram from './tm-diagram2';
+import TuringMachine2, { type MachineState, type MachineTransition } from './tm-machine2.svelte';
+import TuringDiagram from './tm-diagram2.svelte';
 
 type FileInfo = {
     identifier: string,
@@ -57,6 +57,8 @@ export default class TMFile2 {
         this.machine.remove_tape_symbol(index);
         this.diagram.remove_tape_symbol(index);
     }
+
+    edit_transition(state: MachineState, symbol_idx: number, value: MachineTransition | null) { state.transitions[symbol_idx] = value; }
 
     static fromJSON(obj: any) {
         const machine = TuringMachine2.fromJSON(obj.machine);
