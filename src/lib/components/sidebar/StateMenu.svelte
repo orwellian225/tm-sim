@@ -3,7 +3,7 @@
 
     import { Plus, PencilSimple, TrashSimple, EyeClosed, Eye, Check, X } from "phosphor-svelte";
     import { Separator, Tooltip } from "bits-ui";
-	import RecursiveTextMenu from "./RecursiveTextMenu.svelte";
+	import RecursiveTextMenu from "../RecursiveTextMenu.svelte";
 
 	import type TMFile from "$lib/tm-engine/tm-file.svelte";
 
