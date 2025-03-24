@@ -24,7 +24,7 @@ export default class TuringDiagram {
                 transitions: transitions.slice(
                     idx * machine.alphabet.length, 
                     idx * machine.alphabet.length + machine.alphabet.length, 
-                ) .map((fallback_angle) => ({ fallback_angle }))
+                ) .map((fallback_angle) =>  ({ fallback_angle }))
             })
         );
     }
@@ -67,13 +67,16 @@ export default class TuringDiagram {
                 if (q_idx == this.machine.accept_state || q_idx == this.machine.reject_state)
                     return;
 
-                let merge_counts: any = {};
-                this.machine.states[q_idx].transitions.forEach((transition, s_idx) => {
-                    if (transition != null)
-                        merge_counts[transition?.to_state.name] = merge_counts[transition?.to_state.name] + 1 || 0;
-                });
+                let merge_counts: Array<number> = new Array(this.machine.alphabet.length).fill(0);
+                for (let i = 0; i < this.machine.alphabet.length - 1; ++i)
+                    for (let j = i + 1; j < this.machine.alphabet.length; ++j) 
+                        if (this.machine.states[q_idx].transitions[i]?.to_state == this.machine.states[q_idx].transitions[j]?.to_state) {
+                            merge_counts[j] = merge_counts[i] + 1;
+                            break;
+                        }
+
                 state.transitions.forEach((transition, s_idx) => {
-                    this.draw_transition(ctx, q_idx, s_idx, transition, merge_counts[this.machine.states[q_idx].transitions[s_idx]?.to_state.name] - s_idx);
+                    this.draw_transition(ctx, q_idx, s_idx, transition, merge_counts[s_idx]);
                 })
             });
         }
@@ -235,7 +238,7 @@ export default class TuringDiagram {
         const text = `${transition.read_symbol} → ${transition.write_symbol}, ${transition.string_direction}` ;
         if (rotation > Math.PI / 2 && rotation < 3 * Math.PI / 2)
             ctx.scale(-1,-1);
-        ctx.fillText( text, 0, (+!self_loop) * -15 + count * -25 );
+        ctx.fillText( text, 0, (+!self_loop) * -20 + count * -25 );
         ctx.scale(1,1);
         ctx.restore();
 
@@ -339,6 +342,6 @@ export default class TuringDiagram {
     }
 
     static fromJSON(obj: any, machine: TuringMachine2) {
-        return new TuringDiagram(machine, obj.states, obj.transitions);
+        return new TuringDiagram(machine, obj.states, obj.transitions.map((t: any) => t.fallback_angle));
     }
 }
