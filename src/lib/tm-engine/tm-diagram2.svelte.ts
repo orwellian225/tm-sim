@@ -277,7 +277,7 @@ export default class TuringDiagram {
         );
     }
 
-    add_state(state: MachineState) { this.states.push({ position: { x: 0, y: 0 }, state: state, transitions: [] }) }
+    add_state(state: MachineState) { this.states.push({ position: { x: 0, y: 0 }, state: state, transitions: this.machine.alphabet.map((_, idx) => ({ fallback_angle: idx * 2 * Math.PI / this.machine.alphabet.length })) }) }
     edit_state(state: DiagramState, { position = state.position }) { 
         state.position = position;
     }
