@@ -60,6 +60,10 @@ export default class TMFile2 {
 
     edit_transition(state: MachineState, symbol_idx: number, value: MachineTransition | null) { state.transitions[symbol_idx] = value; }
 
+    add_computation(new_input_str: string) {
+        this.computations.push(new_input_str);
+    }
+
     static fromJSON(obj: any) {
         const machine = TuringMachine2.fromJSON(obj.machine);
         return new TMFile2(
