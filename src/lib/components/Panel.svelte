@@ -6,6 +6,7 @@
 	import StateDiagramPanel from "./panel-views/StateDiagramPanel.svelte";
 
 	import { SquareSplitVertical, SquareSplitHorizontal, X } from "phosphor-svelte";
+	import TuringDiagramPanel from "./panel-views/TuringDiagramPanel.svelte";
 
 	let { close_callback = undefined, initial_panel = 0, initial_split = false }: { close_callback: (() => void) | undefined, initial_panel: number, initial_split: boolean } = $props();
 	let split = $state(initial_split);
@@ -34,7 +35,7 @@
 
 	<section class="h-[90%] w-full p-1 overflow-y-auto overflow-x-auto">
 		{#if panel_type == 0}
-			<StateDiagramPanel />
+			<TuringDiagramPanel />
 		{:else if panel_type == 1}
 			<TransitionTablePanel />
 		{:else if panel_type == 2}
