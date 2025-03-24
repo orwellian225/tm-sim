@@ -95,7 +95,6 @@ export default class TuringMachine2 {
     edit_lang_symbol(index: number, new_symbol: string) { this.lang_alphabet[index] = new_symbol; this.refresh_alphabet(); }
     remove_lang_symbol(index: number) {
         this.states.forEach(state => {
-            console.log(state.transitions)
             state.transitions = state.transitions.map((t, idx) => this.alphabet[index + this.tape_alphabet.length] != t?.write_symbol ? t : null)
             state.transitions.splice(index + this.tape_alphabet.length, 1); 
         });

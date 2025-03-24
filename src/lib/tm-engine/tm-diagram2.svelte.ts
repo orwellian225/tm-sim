@@ -22,12 +22,11 @@ export default class TuringDiagram {
                 position: state_pos, 
                 state: machine.states[idx], 
                 transitions: transitions.slice(
-                    idx * machine.states.length * machine.alphabet.length, 
-                    idx * machine.states.length * machine.alphabet.length + machine.alphabet.length, 
+                    idx * machine.alphabet.length, 
+                    idx * machine.alphabet.length + machine.alphabet.length, 
                 ) .map((fallback_angle) => ({ fallback_angle }))
             })
         );
-        
     }
 
     static default(machine: TuringMachine2): TuringDiagram {
