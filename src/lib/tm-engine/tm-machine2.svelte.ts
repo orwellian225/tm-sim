@@ -138,7 +138,6 @@ export default class TuringMachine2 {
     }
 
     static fromJSON(obj: any) {
-        obj = JSON.parse(obj);
         return new TuringMachine2(
             obj.states, obj.lang_alphabet, obj.tape_alphabet,
             obj.transitions.map((t: [number, number, number | null, number | null, number | null]) => { return {

@@ -7,10 +7,10 @@ type FileInfo = {
 }
 
 export default class TMFile2 {
-    info: FileInfo;
-    machine: TuringMachine2;
-    diagram: TuringDiagram;
-    computations: Array<string>;
+    info: FileInfo = $state({ identifier: "", description: "" });
+    machine: TuringMachine2 = $state(TuringMachine2.default());
+    diagram: TuringDiagram = $state(TuringDiagram.default(this.machine));
+    computations: Array<string> = $state([]);
 
     constructor(info: FileInfo, machine: TuringMachine2, diagram: TuringDiagram, computations: Array<string>) {
         this.info = info;

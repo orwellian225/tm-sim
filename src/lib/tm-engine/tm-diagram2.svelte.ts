@@ -141,7 +141,7 @@ export default class TuringDiagram {
             this.draw_bezier_transition(ctx, origin, terminal, 0, {
                 read_symbol: this.machine.alphabet[symbol_idx],
                 write_symbol: machine_transition.write_symbol,
-                string_direction: machine_transition.direction
+                string_direction: ["L", "S", "R"][machine_transition.direction + 1]
             }, true);
 
         } else {
@@ -171,7 +171,7 @@ export default class TuringDiagram {
             this.draw_bezier_transition(ctx, [origin_point, origin_angle], [terminal_point, terminal_angle], merge_count, {
                 read_symbol: this.machine.alphabet[symbol_idx],
                 write_symbol: machine_transition.write_symbol,
-                string_direction: machine_transition.direction
+                string_direction: ["L", "S", "R"][machine_transition.direction + 1]
             }, false);
         }
     } 
