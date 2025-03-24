@@ -64,14 +64,17 @@ export default class TuringDiagram {
 
         if (transitions) {
             this.states.forEach((state, q_idx) => {
-                    let merge_counts: any = {};
-                    this.machine.states[q_idx].transitions.forEach((transition, s_idx) => {
-                        if (transition != null)
-                            merge_counts[transition?.to_state.name] = merge_counts[transition?.to_state.name] + 1 || 0;
-                    });
-                    state.transitions.forEach((transition, s_idx) => {
-                        this.draw_transition(ctx, q_idx, s_idx, transition, merge_counts[this.machine.states[q_idx].transitions[s_idx]?.to_state.name] - s_idx);
-                    })
+                if (q_idx == this.machine.accept_state || q_idx == this.machine.reject_state)
+                    return;
+
+                let merge_counts: any = {};
+                this.machine.states[q_idx].transitions.forEach((transition, s_idx) => {
+                    if (transition != null)
+                        merge_counts[transition?.to_state.name] = merge_counts[transition?.to_state.name] + 1 || 0;
+                });
+                state.transitions.forEach((transition, s_idx) => {
+                    this.draw_transition(ctx, q_idx, s_idx, transition, merge_counts[this.machine.states[q_idx].transitions[s_idx]?.to_state.name] - s_idx);
+                })
             });
         }
     }
