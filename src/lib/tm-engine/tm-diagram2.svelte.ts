@@ -332,7 +332,7 @@ export default class TuringDiagram {
     toJSON() {
         return {
             states: this.states.map((state: DiagramState) => state.position),
-            transitions: this.states.map((state: DiagramState) => state.transitions.map((transition: DiagramTransition) => transition.fallback_angle))
+            transitions: this.states.map((state: DiagramState) => state.transitions.map((transition: DiagramTransition) => transition.fallback_angle)).flat()
         };
     }
 
