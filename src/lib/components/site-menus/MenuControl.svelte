@@ -50,16 +50,16 @@
         direction_enum = 0, 
     }) {
         return current_tm.machine.states.map(( state, q_idx ) => 
-            state.transitions.map(( trans, s_idx ) => [
+            state.transitions.filter((trans) => trans != null).map(( trans, s_idx ) => [
                 state_counter ? q_idx.toString(base) : state.name, 
                 symbol_counter ? s_idx.toString(base) : current_tm.machine.alphabet[s_idx], 
-                trans == null ? null : state_counter ? current_tm.machine.states.indexOf(trans.to_state).toString(base) : trans.to_state.name,
-                trans == null ? null : symbol_counter ? current_tm.machine.alphabet.indexOf(trans.write_symbol).toString(base) : trans.write_symbol,
-                trans == null ? null : direction_enum == 0 ? ["L", "S", "R"][trans.direction + 1] :
+                state_counter ? current_tm.machine.states.indexOf(trans.to_state).toString(base) : trans.to_state.name,
+                symbol_counter ? current_tm.machine.alphabet.indexOf(trans.write_symbol).toString(base) : trans.write_symbol,
+                direction_enum == 0 ? ["L", "S", "R"][trans.direction + 1] :
                     direction_enum == 1 ? [0, null, 1][trans.direction + 1] :
                     direction_enum == 2 ? trans.direction?.toString(base) : ["L", "S", "R"][trans.direction + 1],
             ].join(field_seperator)
-        )).flat().slice(0, num_transitions).join(transition_seperator)
+        )).flat().slice(0, num_transitions).join(transition_seperator) + transition_seperator;
     }
 
     let dialog_element: HTMLDialogElement;
