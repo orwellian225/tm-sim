@@ -1,17 +1,18 @@
 <script lang="ts">
-	import TMComputation from "$lib/tm-engine/tm-computation.svelte";
     import Camera from "$lib/canvas/camera";
     let { in_str, machine, show_resources = false, remove_callback } = $props();
 
     import { ArrowCounterClockwise, Play, SkipForward, TrashSimple, MagnifyingGlassMinus, MagnifyingGlassPlus, Gear } from "phosphor-svelte";
 	import { onMount } from "svelte";
+	import TuringComputation from "$lib/tm-engine/tm-computation2.svelte";
+	import type { MachineState } from "$lib/tm-engine/tm-machine2.svelte";
 
-    let computation: TMComputation = $derived(new TMComputation(machine, in_str));
+    let computation: TuringComputation = $derived(new TuringComputation(machine, in_str));
 
-    function status_to_string(status_value: number, computation_state: number): string {
+    function status_to_string(status_value: number, computation_state: MachineState): string {
         switch (status_value) {
             case 0: 
-                return machine.states[computation_state];
+                return computation_state.name;
             case 1: 
                 return "Accepted";
             case 2: 

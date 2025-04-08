@@ -1,10 +1,10 @@
 <script lang="ts">
-    import TMFile from "$lib/tm-engine/tm-file.svelte";
+    import TMFile2 from "$lib/tm-engine/tm-file2.svelte";
 
-    import { getContext, onMount, untrack } from "svelte";
+	import { getContext, onMount } from "svelte";
     import Camera from "$lib/canvas/camera";
 
-    let current_tm: TMFile = getContext("current_turing_machine")
+    let current_tm: TMFile2 = getContext("current_turing_machine");
 
     let canvas_parent: HTMLDivElement;
     let canvas: HTMLCanvasElement;
@@ -19,8 +19,7 @@
     let camera_dragging = false;
 
     let dragging_state_idx: number = -1;
-    let dragging_transition_idx = -1;
-
+    let dragging_transition: { state_idx: number, symbol_idx: number } = { state_idx: -1, symbol_idx: -1 };
 
     onMount(() => {
         canvas.addEventListener("mousemove", (event: MouseEvent) => {
@@ -31,44 +30,39 @@
                 );
             }
 
-            if (dragging_transition_idx != -1) {
-                let world_mouse = camera.screenToWorld(event.offsetX, event.offsetY, {x: 0, y: 0})
-                current_tm.diagram.transitions[dragging_transition_idx].fallback_angle = Math.atan2(
-                    world_mouse.y - current_tm.diagram.transitions[dragging_transition_idx].origin_point.state_position.y,
-                    world_mouse.x - current_tm.diagram.transitions[dragging_transition_idx].origin_point.state_position.x
-                );
-                current_tm.diagram.transitions[dragging_transition_idx].refresh_angles();
-            }
-
             if (dragging_state_idx != -1) {
                 let world_mouse = camera.screenToWorld(event.offsetX, event.offsetY, {x: 0, y: 0})
-                current_tm.update_diagram_state(dragging_state_idx, world_mouse);
+                current_tm.diagram.edit_state(current_tm.diagram.states[dragging_state_idx], { position: world_mouse });
+            }
+
+            if (dragging_transition.state_idx != -1) {
+                let world_mouse = camera.screenToWorld(event.offsetX, event.offsetY, {x: 0, y: 0})
+                let angle = Math.atan2(
+                    world_mouse.y - current_tm.diagram.states[dragging_transition.state_idx].position.y,
+                    world_mouse.x - current_tm.diagram.states[dragging_transition.state_idx].position.x,
+                );
+                current_tm.diagram.edit_transition(current_tm.diagram.states[dragging_transition.state_idx].transitions[dragging_transition.symbol_idx], { fallback_angle: angle });
             }
         });
+
         canvas.addEventListener("mousedown", (event) => { 
             if (event.button == 2) { camera_dragging = true; } 
             if (event.button == 0) {
-                for (let i = 0; i < current_tm.diagram.states.length; ++i) {
-                    let world_mouse = camera.screenToWorld(event.offsetX, event.offsetY, {x: 0, y: 0})
-                    if (current_tm.diagram.states[i].point_collide(world_mouse.x, world_mouse.y)) {
-                        dragging_state_idx = i;
-                        return;
-                    }
-                }
-                
-                for (let i = 0; i < current_tm.diagram.transitions.length; ++i) {
-                    let world_mouse = camera.screenToWorld(event.offsetX, event.offsetY, {x: 0, y: 0})
-                    if (current_tm.diagram.transitions[i].point_collide(world_mouse.x, world_mouse.y)) {
-                        dragging_transition_idx = i;
-                        return;
-                    }
-                }
+                let world_mouse = camera.screenToWorld(event.offsetX, event.offsetY, {x: 0, y: 0})
+                dragging_transition = current_tm.diagram.collide_transition_point(world_mouse)
+                if (dragging_transition.state_idx == -1) { dragging_state_idx = current_tm.diagram.collide_state_point(world_mouse); }
             }
         });
+
         canvas.addEventListener("mouseup", (event) => {
-             if (event.button == 2) { camera_dragging = false; } 
-             if (event.button == 0) { dragging_state_idx = -1; dragging_transition_idx = -1; }
+            if (event.button == 2) { camera_dragging = false; } 
+            if (event.button == 0) {
+                dragging_state_idx = -1;
+                dragging_transition.state_idx = -1;
+                dragging_transition.symbol_idx = -1;
+            }
         });
+
         canvas.addEventListener("wheel", (event: WheelEvent) => { camera.zoomTo(camera.distance + (event.deltaY / 2)) });
         canvas_resize_observer.observe(canvas);
 
@@ -91,16 +85,11 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         camera.begin();
 
-            for (let diagram_state of current_tm.diagram.states)
-                diagram_state.draw(ctx);
-
-            for (let diagram_transtion of current_tm.diagram.transitions)
-                diagram_transtion.draw(ctx);
+            current_tm.diagram.draw(ctx);
 
         camera.end();
         requestAnimationFrame(draw);
     }
-
 </script>
 
 <svelte:document oncontextmenu={(event) => {

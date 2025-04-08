@@ -5,21 +5,21 @@
 
 	// ---------------------------------------------------------
 
-	import TMFile from "$lib/tm-engine/tm-file.svelte";
-	import MenuControl from '$lib/components/MenuControl.svelte';
-	import MenuNavigation from '$lib/components/MenuNavigation.svelte';
-	import StateMenu from '$lib/components/StateMenu.svelte';
-	import TapeAlphabetMenu from '$lib/components/TapeAlphabetMenu.svelte';
-	import LangAlphabetMenu from '$lib/components/LangAlphabetMenu.svelte';
+	import MenuControl from '$lib/components/site-menus/MenuControl.svelte';
+	import MenuNavigation from '$lib/components/site-menus/MenuNavigation.svelte';
 
 	import { setContext } from "svelte";
 	import { page } from "$app/state";
 
-	import MachineMenu from '$lib/components/MachineMenu.svelte';
+	import MachineMenu from '$lib/components/sidebar/MachineMenu.svelte';
+	import StateMenu from '$lib/components/sidebar/StateMenu.svelte';
+	import TapeAlphabetMenu from '$lib/components/sidebar/TapeAlphabetMenu.svelte';
+	import LangAlphabetMenu from '$lib/components/sidebar/LangAlphabetMenu.svelte';
 
+	import TMFile2 from "$lib/tm-engine/tm-file2.svelte";
 
-	let current_turing_machine = $state(TMFile.default());
-	setContext("current_turing_machine", current_turing_machine );
+	let current_tm = $state(TMFile2.default());
+	setContext("current_turing_machine", current_tm );
 
 </script>
 
